@@ -1,4 +1,4 @@
-#include "MeshObjResource.hpp"
+#include "AssetManager/MeshObjResource.hpp"
 #include <vector>
 #include <sstream>
 #define TINYOBJLOADER_IMPLEMENTATION
