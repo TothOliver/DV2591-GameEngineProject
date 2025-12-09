@@ -180,6 +180,7 @@
     <ClInclude Include="MemoryManager\StackAllocator.hpp" />
     <ClInclude Include="MemoryManager\StompAllocator.hpp" />
     <ClInclude Include="parser\tiny_obj_loader.h" />
+    <ClInclude Include="RaylibHelper.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
