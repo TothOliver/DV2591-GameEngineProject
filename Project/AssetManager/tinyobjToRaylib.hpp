@@ -1,6 +1,6 @@
 #pragma once
 #include "raylib.h"
-#include "AssetManager/parser/tiny_obj_loader.h"
+#include "parser/tiny_obj_loader.h"
 
 /*
 * Converting to model so that there will be less crap in main

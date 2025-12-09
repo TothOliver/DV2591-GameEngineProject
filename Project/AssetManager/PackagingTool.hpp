@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "AssetManager/ResourceTypeEnum.h"
+#include "ResourceTypeEnum.h"
 
 struct AssetMetaData
 {

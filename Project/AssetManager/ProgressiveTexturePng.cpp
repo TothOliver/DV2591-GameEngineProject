@@ -1,4 +1,4 @@
-#include "AssetManager/ProgressiveTexturePng.hpp"
+#include "ProgressiveTexturePng.hpp"
 #include "raylib.h"
 
 std::string ProgressiveTexturePng::GetNextLODGuid() const

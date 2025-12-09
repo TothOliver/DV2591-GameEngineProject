@@ -1,25 +1,35 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="AssetManager.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="MeshObjResource.cpp" />
-    <ClCompile Include="PackagingTool.cpp" />
-    <ClCompile Include="ProgressiveTexturePng.cpp" />
-    <ClCompile Include="ResourceFactory.cpp" />
-    <ClCompile Include="TexturePngResource.cpp" />
+    <ClCompile Include="MemoryManager\BuddyAllocator.cpp" />
+    <ClCompile Include="MemoryManager\Memory.cpp" />
+    <ClCompile Include="MemoryManager\PoolAllocator.cpp" />
+    <ClCompile Include="MemoryManager\StackAllocator.cpp" />
+    <ClCompile Include="MemoryManager\StompAllocator.cpp" />
+    <ClCompile Include="AssetManager\AssetManager.cpp" />
+    <ClCompile Include="AssetManager\MeshObjResource.cpp" />
+    <ClCompile Include="AssetManager\PackagingTool.cpp" />
+    <ClCompile Include="AssetManager\ProgressiveTexturePng.cpp" />
+    <ClCompile Include="AssetManager\ResourceFactory.cpp" />
+    <ClCompile Include="AssetManager\TexturePngResource.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AssetManager.hpp" />
-    <ClInclude Include="MeshObjResource.hpp" />
-    <ClInclude Include="PackagingTool.hpp" />
     <ClInclude Include="parser\tiny_obj_loader.h" />
-    <ClInclude Include="ProgressiveTexturePng.hpp" />
-    <ClInclude Include="ResourceFactory.hpp" />
-    <ClInclude Include="IResource.hpp" />
-    <ClInclude Include="ResourceTypeEnum.h" />
-    <ClInclude Include="stb_image.h" />
-    <ClInclude Include="TexturePngResource.hpp" />
-    <ClInclude Include="tinyobjToRaylib.hpp" />
+    <ClInclude Include="MemoryManager\BuddyAllocator.hpp" />
+    <ClInclude Include="MemoryManager\Memory.hpp" />
+    <ClInclude Include="MemoryManager\PoolAllocator.hpp" />
+    <ClInclude Include="MemoryManager\StackAllocator.hpp" />
+    <ClInclude Include="MemoryManager\StompAllocator.hpp" />
+    <ClInclude Include="AssetManager\AssetManager.hpp" />
+    <ClInclude Include="AssetManager\IResource.hpp" />
+    <ClInclude Include="AssetManager\MeshObjResource.hpp" />
+    <ClInclude Include="AssetManager\PackagingTool.hpp" />
+    <ClInclude Include="AssetManager\ProgressiveTexturePng.hpp" />
+    <ClInclude Include="AssetManager\ResourceFactory.hpp" />
+    <ClInclude Include="AssetManager\ResourceTypeEnum.h" />
+    <ClInclude Include="AssetManager\stb_image.h" />
+    <ClInclude Include="AssetManager\TexturePngResource.hpp" />
+    <ClInclude Include="AssetManager\tinyobjToRaylib.hpp" />
   </ItemGroup>
 </Project>

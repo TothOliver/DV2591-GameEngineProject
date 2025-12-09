@@ -8,8 +8,8 @@
 #include <thread>
 #include <queue>
 #include <condition_variable>
-#include "AssetManager/IResource.hpp"
-#include "AssetManager/ResourceFactory.hpp"
+#include "IResource.hpp"
+#include "ResourceFactory.hpp"
 
 struct PackageEntry {
     ResourceType type;

@@ -1,4 +1,4 @@
-#include "AssetManager/AssetManager.hpp"
+#include "AssetManager.hpp"
 #include <fstream>
 #include <iostream>
 #include <algorithm>
@@ -22,6 +22,19 @@ AssetManager::~AssetManager()
 
     if(m_worker.joinable()){
         m_worker.join();
+    }
+
+    // Unloading
+    {
+        std::scoped_lock lock(m_loadedMutex);
+
+        for (auto& [guid, resource] : m_loaded)
+        {
+            resource->Unload();
+        }
+
+        m_loaded.clear();
+        m_memoryUsed = 0;
     }
 }
 
@@ -147,6 +160,7 @@ void AssetManager::EvictIfNeeded(size_t neededMemory)
         m_memoryUsed -= it->second->GetSize();
         it->second->Unload();
         m_loaded.erase(it);
+        std::cerr << "AssetManager: No space! Evicting resources.\n";
     }
 
     if (m_memoryUsed + neededMemory > m_memoryLimit) 

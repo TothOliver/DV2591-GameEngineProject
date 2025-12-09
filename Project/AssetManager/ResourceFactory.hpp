@@ -2,7 +2,7 @@
 
 #include <memory>
 #include <string>
-#include "AssetManager/IResource.hpp"
+#include "IResource.hpp"
 
 class ResourceFactory
 {

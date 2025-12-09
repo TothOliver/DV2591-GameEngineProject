@@ -1,7 +1,7 @@
-#include "AssetManager/ResourceFactory.hpp"
-#include "AssetManager/TexturePngResource.hpp"
-#include "AssetManager/MeshObjResource.hpp"
-#include "AssetManager/ProgressiveTexturePng.hpp"
+#include "ResourceFactory.hpp"
+#include "TexturePngResource.hpp"
+#include "MeshObjResource.hpp"
+#include "ProgressiveTexturePng.hpp"
 #include <iostream>
 
 std::shared_ptr<IResource> ResourceFactory::Create(const std::string& guid, ResourceType type)

@@ -1,6 +1,5 @@
-
 #pragma once
-#include "AssetManager/IResource.hpp"
+#include "IResource.hpp"
 #include <vector>
 #include <string>
 

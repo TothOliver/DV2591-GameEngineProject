@@ -1,8 +1,8 @@
-#include "AssetManager/MeshObjResource.hpp"
+#include "MeshObjResource.hpp"
 #include <vector>
 #include <sstream>
 #define TINYOBJLOADER_IMPLEMENTATION
-#include "AssetManager/parser/tiny_obj_loader.h"
+#include "parser/tiny_obj_loader.h"
 
 MeshObj::~MeshObj()
 {
