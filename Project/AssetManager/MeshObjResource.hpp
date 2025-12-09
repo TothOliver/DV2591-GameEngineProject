@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
-#include "IResource.hpp"
-#include "parser/tiny_obj_loader.h"
+#include "AssetManager/IResource.hpp"
+#include "AssetManager/parser/tiny_obj_loader.h"
 
 class MeshObj : public IResource
 {

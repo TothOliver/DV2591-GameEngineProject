@@ -1,4 +1,4 @@
-#include "AssetManager.hpp"
+#include "AssetManager/AssetManager.hpp"
 #include <fstream>
 #include <iostream>
 #include <algorithm>

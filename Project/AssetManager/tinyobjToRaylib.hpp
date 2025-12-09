@@ -1,6 +1,6 @@
 #pragma once
 #include "raylib.h"
-#include "parser/tiny_obj_loader.h"
+#include "AssetManager/parser/tiny_obj_loader.h"
 
 /*
 * Converting to model so that there will be less crap in main
@@ -21,7 +21,7 @@ static Model ConvertAttribToModel(const tinyobj::attrib_t& attrib, const std::ve
             vertices.push_back(attrib.vertices[vIndex + 1]);
             vertices.push_back(attrib.vertices[vIndex + 2]);
 
-            // Normals (nx, ny, nz) — if provided
+            // Normals (nx, ny, nz) ï¿½ if provided
             if (!attrib.normals.empty() && idx.normal_index >= 0)
             {
                 int nIndex = 3 * idx.normal_index;

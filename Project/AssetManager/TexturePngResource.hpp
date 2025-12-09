@@ -1,6 +1,6 @@
 #pragma once
 #include <iostream>
-#include "IResource.hpp"
+#include "AssetManager/IResource.hpp"
 
 
 class TexturePng : public IResource

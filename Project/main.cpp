@@ -1,9 +1,9 @@
-#include "AssetManager.hpp"
-#include "PackagingTool.hpp"
-#include "TexturePngResource.hpp"
-#include "MeshObjResource.hpp"
-#include "ProgressiveTexturePng.hpp"
-#include "TinyobjToRaylib.hpp"
+#include "AssetManager/AssetManager.hpp"
+#include "AssetManager/PackagingTool.hpp"
+#include "AssetManager/TexturePngResource.hpp"
+#include "AssetManager/MeshObjResource.hpp"
+#include "AssetManager/ProgressiveTexturePng.hpp"
+#include "AssetManager/TinyobjToRaylib.hpp"
 #include "raylib.h"
 
 #include <iostream>

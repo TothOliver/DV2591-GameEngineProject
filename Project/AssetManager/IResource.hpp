@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "ResourceTypeEnum.h"
+#include "AssetManager/ResourceTypeEnum.h"
 
 class IResource {
 public:

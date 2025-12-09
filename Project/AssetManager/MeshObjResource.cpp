@@ -2,7 +2,7 @@
 #include <vector>
 #include <sstream>
 #define TINYOBJLOADER_IMPLEMENTATION
-#include "parser/tiny_obj_loader.h"
+#include "AssetManager/parser/tiny_obj_loader.h"
 
 MeshObj::~MeshObj()
 {

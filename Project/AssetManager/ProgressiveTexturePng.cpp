@@ -1,5 +1,5 @@
-#include "ProgressiveTexturePng.hpp"
-#include "raylib.h"
+#include "AssetManager/ProgressiveTexturePng.hpp"
+#include "AssetManager/raylib.h"
 
 std::string ProgressiveTexturePng::GetNextLODGuid() const
 {
