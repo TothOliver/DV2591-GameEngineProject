@@ -179,6 +179,8 @@ int main()
             am.LoadAsync("003");
             std::shared_ptr<IResource> myResource = am.TryGet("003");
             SetTexture(box3, myResource);
+            SetTexture(box4, myResource);
+            SetTexture(box5, myResource);
             SetTexture(sphere, myResource);
         }
 
@@ -264,7 +266,8 @@ int main()
             box3.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = empty;
             box4.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = empty;
             box5.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = empty;
-
+            bigBox.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = empty;
+            sphere.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = empty;
 
             am.Unload("001");
             am.Unload("002");
