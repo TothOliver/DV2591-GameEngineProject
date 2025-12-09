@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="AssetManager.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="MeshObjResource.cpp" />
+    <ClCompile Include="PackagingTool.cpp" />
+    <ClCompile Include="ProgressiveTexturePng.cpp" />
+    <ClCompile Include="ResourceFactory.cpp" />
+    <ClCompile Include="TexturePngResource.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AssetManager.hpp" />
+    <ClInclude Include="MeshObjResource.hpp" />
+    <ClInclude Include="PackagingTool.hpp" />
+    <ClInclude Include="parser\tiny_obj_loader.h" />
+    <ClInclude Include="ProgressiveTexturePng.hpp" />
+    <ClInclude Include="ResourceFactory.hpp" />
+    <ClInclude Include="IResource.hpp" />
+    <ClInclude Include="ResourceTypeEnum.h" />
+    <ClInclude Include="stb_image.h" />
+    <ClInclude Include="TexturePngResource.hpp" />
+    <ClInclude Include="tinyobjToRaylib.hpp" />
+  </ItemGroup>
+</Project>

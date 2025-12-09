@@ -1,0 +1,9 @@
+001,Assets/Toe.png,TexturePng
+002,Assets/Portman_v1_big.png,TexturePng
+003,Assets/Noise.png,TexturePng
+004_lod0,Assets/plastic_low.png,ProgressiveTexturePng
+004_lod1,Assets/plastic_medium.png,ProgressiveTexturePng
+004_lod2,Assets/plastic_high.png,ProgressiveTexturePng
+005,Assets/plastic_low.png,TexturePng
+101,Assets/cube.obj,Mesh
+102,Assets/sphere.obj,Mesh
