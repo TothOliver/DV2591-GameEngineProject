@@ -3,6 +3,9 @@
 #include "RaylibHelper.hpp"
 #include "raylib.h"
 
+#include "StackAllocator.hpp"
+#include "ExplosionSystem.hpp"
+
 #include <iostream>
 #include <string>
 #include <memory>
@@ -20,6 +23,9 @@ int main()
 
     //Asset manager
     AssetManager am(10 * 1024 * 1024, "Assets.bundle");
+
+    StackAllocator frameAllocator(1024 * 1024);  
+    ExplosionSystem explosionSystem(frameAllocator);
 
     //Start loading some stuff
     am.LoadAsync("001");
@@ -64,6 +70,20 @@ int main()
 
     while (!WindowShouldClose())
     {
+        float dt = GetFrameTime();
+
+        frameAllocator.Reset();
+        explosionSystem.Update(dt);
+
+        if (IsKeyPressed(KEY_SPACE))
+        {
+            Vector3 explosionPos = { 0, 0, 0 };
+            explosionSystem.AddExplosion(explosionPos, 4.0f, 1.0f);
+        }
+
+        explosionSystem.BuildRendererData();
+
+
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
@@ -92,6 +112,17 @@ int main()
         //small boxes
         DrawModel(dynamicModel, { -3, 3, -3 }, 1.0f, DARKGRAY);
         DrawModel(box1, { 0, 3, -3 }, 1.0f, WHITE);
+
+        // ---- Render explosions (simple spheres) ----
+        const ExplosionVertex* verts = explosionSystem.GetVertices();
+        size_t vcount = explosionSystem.GetVertexCount();
+
+        for (size_t i = 0; i < vcount; i++)
+        {
+            const ExplosionVertex& v = verts[i];
+            DrawSphere(v.position, v.size, v.color);
+        }
+
 
         EndMode3D();
 
