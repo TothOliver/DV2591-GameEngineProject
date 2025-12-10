@@ -40,23 +40,13 @@ int main()
     
     //Dynamic model using GUID (Texture isnt set here, it is set when fully loaded)
     auto obj = am.Load("101");
-    //auto mesh = std::dynamic_pointer_cast<MeshObj>(obj);
     Model dynamicModel = rh.GetModel("101", "dynamicModel");
     Model background = rh.GetModel("101", "background");
     Model box1 = rh.GetModel("101", "box1");
     am.Load("001");
     Texture2D toe = rh.GetTexture("001");
     SetTexture(box1, toe);
-    /*Model box2 = ConvertAttribToModel(mesh->GetAttrib(), mesh->GetShapes());
-    Model box3 = ConvertAttribToModel(mesh->GetAttrib(), mesh->GetShapes());
-    Model box4 = ConvertAttribToModel(mesh->GetAttrib(), mesh->GetShapes());
-    Model box5 = ConvertAttribToModel(mesh->GetAttrib(), mesh->GetShapes());
-    Model bigBox = ConvertAttribToModel(mesh->GetAttrib(), mesh->GetShapes());
-
-    auto roundObj = am.Load("102");
-    auto sphereMesh = std::dynamic_pointer_cast<MeshObj>(roundObj);
-    Model sphere = ConvertAttribToModel(sphereMesh->GetAttrib(), sphereMesh->GetShapes());*/
-
+  
     //progressive stuff
 
     std::string LODName;
@@ -74,13 +64,6 @@ int main()
 
     while (!WindowShouldClose())
     {
-        /*if (!rayTextureReady)
-        {
-            std::shared_ptr<IResource> baseRes = am.TryGet("001");
-            SetTexture(dynamicModel, baseRes);
-            rayTextureReady = true;
-        }*/
-        
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
@@ -97,116 +80,6 @@ int main()
             //SetTexture(model, texture);
         }
 
-        /*if (IsKeyPressed(KEY_TWO))
-        {
-            am.LoadAsync("002");
-            box1.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture.id = 1;
-            std::shared_ptr<IResource> myResource = am.TryGet("002");
-            SetTexture(box2, myResource);
-        }
-
-        if (IsKeyPressed(KEY_THREE))
-        {
-            am.LoadAsync("003");
-            std::shared_ptr<IResource> myResource = am.TryGet("003");
-            SetTexture(box3, myResource);
-            SetTexture(box4, myResource);
-            SetTexture(box5, myResource);
-            SetTexture(sphere, myResource);
-        }
-
-        if (IsKeyPressed(KEY_FOUR))
-        {
-            am.LoadAsync("004_lod0");
-            std::shared_ptr<IResource> myResource = am.TryGet("004_lod0");
-
-            if (myResource) {
-                SetTexture(bigBox, myResource);
-
-                auto progRes = std::dynamic_pointer_cast<ProgressiveTexturePng>(myResource);
-                if (progRes) {
-                    progRes->SetLODInfo(2);
-                    LODName = progRes->GetNextLODGuid();
-                    am.LoadAsync(LODName);
-                    higherLODRequested = true;
-                    LODTimer = 0.0f;
-                }
-            }
-        }
-
-        if (IsKeyPressed(KEY_FIVE))
-        {
-            for (int i = 200; i < 220; i++)
-            {
-                am.LoadAsync(std::to_string(i));
-            }
-        }
-
-        if (higherLODRequested)
-        {
-            LODTimer += GetFrameTime();
-
-            if (LODTimer >= 2.0f)
-            {
-                auto higherLODRes = am.TryGet(LODName);
-
-                if (higherLODRes) {
-                    auto currentRes = am.TryGet("004_lod0");
-                    auto currentTex = std::dynamic_pointer_cast<ProgressiveTexturePng>(currentRes);
-                    auto higherTex = std::dynamic_pointer_cast<ProgressiveTexturePng>(higherLODRes);
-
-                    if (currentTex && higherTex)
-                    {
-                        bool loaded = currentTex->LoadHigherLOD(
-                            std::vector<uint8_t>(higherTex->GetImageData(),
-                                higherTex->GetImageData() + (higherTex->GetWidth() * higherTex->GetHeight() * 4)),
-                            higherTex->GetWidth(),
-                            higherTex->GetHeight()
-                        );
-
-                        if (loaded)
-                        {
-                            currentTex->TryUpgrade();
-                            SetTexture(bigBox, currentRes);
-                            
-                            am.Unload(LODName);
-
-                            if (currentTex->HasHigherLOD())
-                            {
-                                LODName = currentTex->GetNextLODGuid();
-                                am.LoadAsync(LODName);
-                                LODTimer = 0.0f;
-                            }
-                            else
-                            {
-                                higherLODRequested = false;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-
-
-        if (IsKeyPressed(KEY_X))
-        {
-            Texture2D empty{};
-            box1.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = empty;
-            box2.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = empty;
-            box3.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = empty;
-            box4.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = empty;
-            box5.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = empty;
-            bigBox.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = empty;
-            sphere.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = empty;
-
-            am.Unload("001");
-            am.Unload("002");
-            am.Unload("003");
-            am.Unload("004_lod0");
-
-            UnloadTexture(empty);
-        }*/
 
         //Background
         DrawModel(background, { 0, -22, 0 }, 20.0f, DARKGREEN);
@@ -219,16 +92,6 @@ int main()
         //small boxes
         DrawModel(dynamicModel, { -3, 3, -3 }, 1.0f, DARKGRAY);
         DrawModel(box1, { 0, 3, -3 }, 1.0f, WHITE);
-        /*DrawModel(box2, { 3, 3, -3 }, 1.0f, WHITE);
-        DrawModel(box3, { -3, 0, -3 }, 1.0f, WHITE);
-        DrawModel(box4, { 0, 0, -3 }, 1.0f, WHITE);
-        DrawModel(box5, { 3, 0, -3 }, 1.0f, WHITE);
-
-        //Progressive
-        DrawModel(bigBox, { -12, 1, -6 }, 2.0f, WHITE);
-
-        //test
-        DrawModel(sphere, { 10, 1, -3 }, 2.0f, WHITE);*/
 
         EndMode3D();
 
