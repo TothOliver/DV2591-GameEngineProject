@@ -21,7 +21,7 @@ static Model ConvertAttribToModel(const tinyobj::attrib_t& attrib, const std::ve
             vertices.push_back(attrib.vertices[vIndex + 1]);
             vertices.push_back(attrib.vertices[vIndex + 2]);
 
-            // Normals (nx, ny, nz) � if provided
+            // Normals (nx, ny, nz) if provided
             if (!attrib.normals.empty() && idx.normal_index >= 0)
             {
                 int nIndex = 3 * idx.normal_index;

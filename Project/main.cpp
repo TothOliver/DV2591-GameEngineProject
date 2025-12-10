@@ -1,93 +1,15 @@
-#include "AssetManager/AssetManager.hpp"
 #include "AssetManager/PackagingTool.hpp"
-#include "AssetManager/TexturePngResource.hpp"
-#include "AssetManager/MeshObjResource.hpp"
-#include "AssetManager/ProgressiveTexturePng.hpp"
-#include "AssetManager/TinyobjToRaylib.hpp"
-#include "MemoryManager/Memory.hpp"
+//#include "AssetManager/TinyobjToRaylib.hpp"
+#include "RaylibHelper.hpp"
 #include "raylib.h"
 
 #include <iostream>
 #include <string>
 #include <memory>
 
-void SetTexture(Model& model, std::shared_ptr<IResource>& baseRes)
+void SetTexture(Model& model, Texture2D& texture)
 {
-    if (baseRes)
-    {
-        ResourceType type = baseRes->GetResourceType();
-
-        if (type == ResourceType::TexturePng)
-        {
-            auto pngRes = std::dynamic_pointer_cast<TexturePng>(baseRes);
-
-            if (!pngRes)
-            {
-                std::cerr << "Error: Resource for GUID " << baseRes->GetGUID() << " is not a TexturePng.\n";
-            }
-            else
-            {
-                Texture2D texture{};
-                const unsigned char* pixels = pngRes->GetTexture();
-
-                int width = pngRes->GetWidth();
-                int height = pngRes->GetHeight();
-
-                Image img{};
-                img.data = (void*)pixels;
-                img.width = width;
-                img.height = height;
-                img.mipmaps = 1;
-                img.format = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8;
-                texture = LoadTextureFromImage(img);
-
-                std::cout << "Async texture ready: " << width << "x" << height << "\n";
-
-                Texture2D oldTexture = model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture;
-                if (oldTexture.id != 1) 
-                {
-                    UnloadTexture(oldTexture);
-                }
-
-                model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
-            }
-        }
-        else if (type == ResourceType::ProgressiveTexturePng)
-        {
-            auto pngRes = std::dynamic_pointer_cast<ProgressiveTexturePng>(baseRes);
-
-            if (!pngRes)
-            {
-                std::cerr << "Error: Resource for GUID " << baseRes->GetGUID() << " is not a TexturePng.\n";
-            }
-            else
-            {
-                Texture2D texture{};
-                const unsigned char* pixels = pngRes->GetTexture();
-
-                int width = pngRes->GetWidth();
-                int height = pngRes->GetHeight();
-
-                Image img{};
-                img.data = (void*)pixels;
-                img.width = width;
-                img.height = height;
-                img.mipmaps = 1;
-                img.format = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8;
-                texture = LoadTextureFromImage(img);
-
-                std::cout << "Async texture ready: " << width << "x" << height << "\n";
-
-                Texture2D oldTexture = model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture;
-                if (oldTexture.id != 1)
-                {
-                    UnloadTexture(oldTexture);
-                }
-
-                model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
-            }
-        }
-    }
+    model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
 }
 
 int main()
@@ -113,13 +35,19 @@ int main()
     InitWindow(width, height, "Tony Rickardsson");
     SetTargetFPS(60);
 
+    //Raylib helper
+    RaylibHelper rh(am);
+    
     //Dynamic model using GUID (Texture isnt set here, it is set when fully loaded)
     auto obj = am.Load("101");
-    auto mesh = std::dynamic_pointer_cast<MeshObj>(obj);
-    Model dynamicModel = ConvertAttribToModel(mesh->GetAttrib(), mesh->GetShapes());
-    Model background = ConvertAttribToModel(mesh->GetAttrib(), mesh->GetShapes());
-    Model box1 = ConvertAttribToModel(mesh->GetAttrib(), mesh->GetShapes());
-    Model box2 = ConvertAttribToModel(mesh->GetAttrib(), mesh->GetShapes());
+    //auto mesh = std::dynamic_pointer_cast<MeshObj>(obj);
+    Model dynamicModel = rh.GetModel("101", "dynamicModel");
+    Model background = rh.GetModel("101", "background");
+    Model box1 = rh.GetModel("101", "box1");
+    am.Load("001");
+    Texture2D toe = rh.GetTexture("001");
+    SetTexture(box1, toe);
+    /*Model box2 = ConvertAttribToModel(mesh->GetAttrib(), mesh->GetShapes());
     Model box3 = ConvertAttribToModel(mesh->GetAttrib(), mesh->GetShapes());
     Model box4 = ConvertAttribToModel(mesh->GetAttrib(), mesh->GetShapes());
     Model box5 = ConvertAttribToModel(mesh->GetAttrib(), mesh->GetShapes());
@@ -127,7 +55,7 @@ int main()
 
     auto roundObj = am.Load("102");
     auto sphereMesh = std::dynamic_pointer_cast<MeshObj>(roundObj);
-    Model sphere = ConvertAttribToModel(sphereMesh->GetAttrib(), sphereMesh->GetShapes());
+    Model sphere = ConvertAttribToModel(sphereMesh->GetAttrib(), sphereMesh->GetShapes());*/
 
     //progressive stuff
 
@@ -142,17 +70,16 @@ int main()
     camera.fovy = 45.0f;
     camera.projection = CAMERA_PERSPECTIVE;
 
-    bool rayTextureReady = false;
     float LODTimer = 0.0;
 
     while (!WindowShouldClose())
     {
-        if (!rayTextureReady)
+        /*if (!rayTextureReady)
         {
             std::shared_ptr<IResource> baseRes = am.TryGet("001");
             SetTexture(dynamicModel, baseRes);
             rayTextureReady = true;
-        }
+        }*/
         
         BeginDrawing();
         ClearBackground(RAYWHITE);
@@ -165,12 +92,15 @@ int main()
         {
             am.LoadAsync("001");
             std::shared_ptr<IResource> myResource = am.TryGet("001");
-            SetTexture(box1, myResource);
+            //Model model = rh.GetModel("101");
+            Texture2D texture = rh.GetTexture("001");
+            //SetTexture(model, texture);
         }
 
-        if (IsKeyPressed(KEY_TWO))
+        /*if (IsKeyPressed(KEY_TWO))
         {
             am.LoadAsync("002");
+            box1.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture.id = 1;
             std::shared_ptr<IResource> myResource = am.TryGet("002");
             SetTexture(box2, myResource);
         }
@@ -276,20 +206,20 @@ int main()
             am.Unload("004_lod0");
 
             UnloadTexture(empty);
-        }
+        }*/
 
         //Background
         DrawModel(background, { 0, -22, 0 }, 20.0f, DARKGREEN);
-        DrawModel(background, { 40, 0, 0 }, 20.0f, DARKBLUE);
-        DrawModel(background, { -40, 0, 0 }, 20.0f, DARKBLUE);
+        DrawModel(background, {40, 0, 0}, 20.0f, DARKBLUE);
+        DrawModel(background, {-40, 0, 0}, 20.0f, DARKBLUE);
         DrawModel(background, { 0, 0, 40 }, 20.0f, DARKBLUE);
         DrawModel(background, { 0, 0, -40 }, 20.0f, LIGHTGRAY);
         DrawModel(background, { 0, 30, 0 }, 20.0f, DARKBLUE);
 
         //small boxes
-        DrawModel(dynamicModel, { -3, 3, -3 }, 1.0f, LIGHTGRAY);
+        DrawModel(dynamicModel, { -3, 3, -3 }, 1.0f, DARKGRAY);
         DrawModel(box1, { 0, 3, -3 }, 1.0f, WHITE);
-        DrawModel(box2, { 3, 3, -3 }, 1.0f, WHITE);
+        /*DrawModel(box2, { 3, 3, -3 }, 1.0f, WHITE);
         DrawModel(box3, { -3, 0, -3 }, 1.0f, WHITE);
         DrawModel(box4, { 0, 0, -3 }, 1.0f, WHITE);
         DrawModel(box5, { 3, 0, -3 }, 1.0f, WHITE);
@@ -298,7 +228,7 @@ int main()
         DrawModel(bigBox, { -12, 1, -6 }, 2.0f, WHITE);
 
         //test
-        DrawModel(sphere, { 10, 1, -3 }, 2.0f, WHITE);
+        DrawModel(sphere, { 10, 1, -3 }, 2.0f, WHITE);*/
 
         EndMode3D();
 
@@ -313,17 +243,6 @@ int main()
         DrawText("x -> Clean all", 30, 150, 30, BLACK);
 
         EndDrawing();
-    }
-
-    std::vector<Model> models = { dynamicModel, background, box1, box2, box3, box4, box5, bigBox, sphere };
-    for (int i = 0; i < models.size(); i++)
-    {
-        Texture2D oldTexture = models[i].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture;
-        if (oldTexture.id != 1)
-        {
-            UnloadTexture(oldTexture);
-        }
-        UnloadModel(models[i]);
     }
 
     CloseWindow();

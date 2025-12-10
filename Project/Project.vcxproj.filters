@@ -13,9 +13,10 @@
     <ClCompile Include="AssetManager\ProgressiveTexturePng.cpp" />
     <ClCompile Include="AssetManager\ResourceFactory.cpp" />
     <ClCompile Include="AssetManager\TexturePngResource.cpp" />
+    <ClCompile Include="RaylibHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AssetManager\parser\tiny_obj_loader.h" />
+    <ClInclude Include="parser\tiny_obj_loader.h" />
     <ClInclude Include="MemoryManager\BuddyAllocator.hpp" />
     <ClInclude Include="MemoryManager\Memory.hpp" />
     <ClInclude Include="MemoryManager\PoolAllocator.hpp" />
@@ -31,5 +32,6 @@
     <ClInclude Include="AssetManager\stb_image.h" />
     <ClInclude Include="AssetManager\TexturePngResource.hpp" />
     <ClInclude Include="AssetManager\tinyobjToRaylib.hpp" />
+    <ClInclude Include="RaylibHelper.hpp" />
   </ItemGroup>
 </Project>
