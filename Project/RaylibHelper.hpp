@@ -29,10 +29,10 @@ public:
 	~RaylibHelper();
 
 	Texture2D GetTexture(std::string GUID);
-	Model GetModel(std::string GUID);
+	Model GetModel(std::string GUID, std::string name);
 
 	void ReleaseTexture(std::string GUID);
-	void ReleaseModel(std::string GUID);
+	void ReleaseModel(std::string name);
 
 	void CleanUp();
 

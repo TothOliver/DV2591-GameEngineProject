@@ -37,8 +37,9 @@ bool TexturePng::Unload()
 	//unload un texture
 	if (m_imageData)
 	{
+		//free(m_imageData);
 		m_imageData = nullptr;
-		m_height = 0, m_width = 0, m_channels = 0, m_size = 0;
+		m_height = m_width = m_channels = m_size = 0;
 		return true;
 	}
 

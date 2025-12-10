@@ -41,9 +41,9 @@ int main()
     //Dynamic model using GUID (Texture isnt set here, it is set when fully loaded)
     auto obj = am.Load("101");
     //auto mesh = std::dynamic_pointer_cast<MeshObj>(obj);
-    Model dynamicModel = rh.GetModel("101");
-    Model background = rh.GetModel("101");
-    Model box1 = rh.GetModel("101");
+    Model dynamicModel = rh.GetModel("101", "dynamicModel");
+    Model background = rh.GetModel("101", "background");
+    Model box1 = rh.GetModel("101", "box1");
     am.Load("001");
     Texture2D toe = rh.GetTexture("001");
     SetTexture(box1, toe);
@@ -92,9 +92,9 @@ int main()
         {
             am.LoadAsync("001");
             std::shared_ptr<IResource> myResource = am.TryGet("001");
-            Model model = rh.GetModel("101");
+            //Model model = rh.GetModel("101");
             Texture2D texture = rh.GetTexture("001");
-            SetTexture(model, texture);
+            //SetTexture(model, texture);
         }
 
         /*if (IsKeyPressed(KEY_TWO))

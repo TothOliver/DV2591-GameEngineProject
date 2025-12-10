@@ -33,10 +33,10 @@ Texture2D RaylibHelper::GetTexture(std::string GUID)
 	return entry.texture;
 }
 
-Model RaylibHelper::GetModel(std::string GUID)
+Model RaylibHelper::GetModel(std::string GUID, std::string name)
 {
     m_assetManager->LoadAsync(GUID);
-    auto& entry = m_models[GUID];
+    auto& entry = m_models[name];
 
     if (entry.refCount == 0)
     {
@@ -69,13 +69,13 @@ void RaylibHelper::ReleaseTexture(std::string GUID)
     {
         UnloadTexture(it->second.texture);
         m_textures.erase(it);
-        m_assetManager->Unload(GUID);
+        m_assetManager->Unload(GUID); //maybe
     }
 }
 
-void RaylibHelper::ReleaseModel(std::string GUID)
+void RaylibHelper::ReleaseModel(std::string name)
 {
-    auto it = m_models.find(GUID);
+    auto it = m_models.find(name);
     if (it == m_models.end())
     {
         return;
@@ -85,7 +85,7 @@ void RaylibHelper::ReleaseModel(std::string GUID)
     {
         UnloadModel(it->second.model);
         m_models.erase(it);
-        m_assetManager->Unload(GUID);
+        //m_assetManager->Unload(GUID); //maybe
     }
 }
 
