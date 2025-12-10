@@ -82,7 +82,7 @@ void SetTexture(Model& model, std::shared_ptr<IResource>& baseRes)
                 {
                     UnloadTexture(oldTexture);
                 }
-
+                
                 model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
             }
         }
@@ -170,6 +170,7 @@ int main()
         if (IsKeyPressed(KEY_TWO))
         {
             am.LoadAsync("002");
+            box1.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture.id = 1;
             std::shared_ptr<IResource> myResource = am.TryGet("002");
             SetTexture(box2, myResource);
         }

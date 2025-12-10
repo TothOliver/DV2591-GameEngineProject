@@ -1,8 +1,13 @@
 #pragma once
-
 #include <iostream>
 #include <vector>
 #include <unordered_map>
+
+#include "AssetManager/AssetManager.hpp"
+#include "AssetManager/TexturePngResource.hpp"
+#include "AssetManager/MeshObjResource.hpp"
+#include "AssetManager/ProgressiveTexturePng.hpp"
+#include "AssetManager/tinyobjToRaylib.hpp"
 #include "raylib.h"
 
 struct TextureEntry
@@ -20,20 +25,27 @@ struct ModelEntry
 class RaylibHelper
 {
 public:
-	RaylibHelper();
+	RaylibHelper(AssetManager& assetManager);
 	~RaylibHelper();
 
 	Texture2D GetTexture(std::string GUID);
 	Model GetModel(std::string GUID);
 
-	void releaseTexture(std::string GUID);
-	void releaseModel(std::string GUID);
+	void ReleaseTexture(std::string GUID);
+	void ReleaseModel(std::string GUID);
 
-	void cleanup();
+	void CleanUp();
 
 private:
+	Texture2D GenerateTexture(std::shared_ptr<IResource>& baseRes);
+	Texture2D GenerateBaseTexture();
+	Model GenerateBaseModel();
+
 	std::unordered_map<std::string, TextureEntry> m_textures;
 	std::unordered_map<std::string, ModelEntry> m_models;
 
-	//potential asset manager in here?
+	Texture2D m_baseTexture;
+	Model m_baseModel;
+
+	AssetManager* m_assetManager;
 };
