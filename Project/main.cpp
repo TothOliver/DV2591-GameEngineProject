@@ -17,7 +17,7 @@ int main()
     packagingTool.buildPackage("AssetsTextList.txt", "Assets.bundle");
 
     //Asset manager
-    AssetManager am(10 * 1024 * 1024, "Assets.bundle");
+    AssetManager am(64 * 1024 * 1024, "Assets.bundle");
 
     //Start loading some stuff
     am.LoadAsync("001");
@@ -49,6 +49,13 @@ int main()
 
     am.Load("102");
     Model sphere = rh.GetModel("102", "sphere");
+
+    am.Load("103");
+    Model tree = rh.GetModel("103", "tree");
+    am.Load("104");
+    Model table = rh.GetModel("104", "table");
+    am.Load("105");
+    Model figures = rh.GetModel("105", "figures");
 
     //progressive stuff
 
@@ -205,6 +212,9 @@ int main()
 
         //test
         DrawModel(sphere, { 10, 1, -3 }, 2.0f, WHITE);
+        DrawModel(tree, { 10, -2, -10 }, 0.5f, LIME);
+        DrawModel(table, { -10, -1, -15 }, 0.02f, DARKBROWN);
+        DrawModel(figures, { 15, -2, 15 }, 0.15f, RED);
 
         EndMode3D();
 
