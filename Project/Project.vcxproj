@@ -162,6 +162,9 @@
     <ClCompile Include="MemoryManager\PoolAllocator.cpp" />
     <ClCompile Include="MemoryManager\StackAllocator.cpp" />
     <ClCompile Include="MemoryManager\StompAllocator.cpp" />
+    <ClCompile Include="Projectile.cpp" />
+    <ClCompile Include="ProjectileManager.cpp" />
+    <ClCompile Include="ProjectileRenderer.cpp" />
     <ClCompile Include="RaylibHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -181,6 +184,9 @@
     <ClInclude Include="MemoryManager\StackAllocator.hpp" />
     <ClInclude Include="MemoryManager\StompAllocator.hpp" />
     <ClInclude Include="parser\tiny_obj_loader.h" />
+    <ClInclude Include="Projectile.hpp" />
+    <ClInclude Include="ProjectileManager.hpp" />
+    <ClInclude Include="ProjectileRenderer.hpp" />
     <ClInclude Include="RaylibHelper.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
