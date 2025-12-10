@@ -1,7 +1,5 @@
 #include "AssetManager/PackagingTool.hpp"
-//#include "AssetManager/TinyobjToRaylib.hpp"
 #include "RaylibHelper.hpp"
-#include "raylib.h"
 
 #include <iostream>
 #include <string>
@@ -85,21 +83,18 @@ int main()
 
         if (IsKeyPressed(KEY_ONE))
         {
-            am.LoadAsync("001");
             Texture2D toe = rh.GetTexture("001");
             SetTexture(box1, toe);
         }
 
         if (IsKeyPressed(KEY_TWO))
         {
-            am.LoadAsync("002");
             Texture2D hatley = rh.GetTexture("002");
             SetTexture(box2, hatley);
         }
 
         if (IsKeyPressed(KEY_THREE))
         {
-            am.LoadAsync("003");
             Texture2D noise = rh.GetTexture("003");
             SetTexture(box3, noise);
             SetTexture(box4, noise);
