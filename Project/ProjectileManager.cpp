@@ -4,9 +4,14 @@ void ProjectileManager::Initialize(size_t maxProjectiles)
 {
     InitPool(sizeof(Projectile), maxProjectiles, alignof(Projectile));
     m_projectiles.reserve(maxProjectiles);
+    m_freeProjectiles.reserve(maxProjectiles);
 }
 
-Projectile* ProjectileManager::Create(float x, float y, float dx, float dy, float speed, float lifetime)
+Projectile* ProjectileManager::Create(float x, float y, float z,
+    float dx, float dy, float dz,
+    float speed, float lifetime,
+    const std::string& meshGUID,
+    const std::string& textureGUID)
 {
     Projectile* proj = nullptr;
 
@@ -14,40 +19,40 @@ Projectile* ProjectileManager::Create(float x, float y, float dx, float dy, floa
     {
         proj = m_freeProjectiles.back();
         m_freeProjectiles.pop_back();
-        proj->Init(x, y, dx, dy, speed, lifetime);
+        proj->Init(x, y, z, dx, dy, dz, speed, lifetime, meshGUID, textureGUID);
     }
     else
     {
         void* mem = PoolAlloc();
         if (!mem) return nullptr;
-        proj = new(mem) Projectile();  // placement new
-        proj->Init(x, y, dx, dy, speed, lifetime);
+
+        proj = new(mem) Projectile();
+        proj->Init(x, y, z, dx, dy, dz, speed, lifetime, meshGUID, textureGUID);
     }
 
     m_projectiles.push_back(proj);
     return proj;
 }
 
-
 void ProjectileManager::Update(float dt)
 {
-    for (int i = 0; i < m_projectiles.size(); i++)
+    for (size_t i = 0; i < m_projectiles.size(); )
     {
         Projectile* p = m_projectiles[i];
         p->Update(dt);
 
         if (!p->IsAlive())
         {
-            //return to free pool
             m_freeProjectiles.push_back(p);
-
             m_projectiles[i] = m_projectiles.back();
             m_projectiles.pop_back();
-            i--;
+        }
+        else
+        {
+            ++i;
         }
     }
 }
-
 
 void ProjectileManager::Shutdown()
 {
@@ -58,6 +63,7 @@ void ProjectileManager::Shutdown()
         p->~Projectile();
 
     ShutdownMemory();
+
     m_projectiles.clear();
     m_freeProjectiles.clear();
 }

@@ -14,6 +14,8 @@
     <ClCompile Include="AssetManager\ResourceFactory.cpp" />
     <ClCompile Include="AssetManager\TexturePngResource.cpp" />
     <ClCompile Include="RaylibHelper.cpp" />
+    <ClCompile Include="Projectile.cpp" />
+    <ClCompile Include="ProjectileManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="parser\tiny_obj_loader.h" />
@@ -33,5 +35,8 @@
     <ClInclude Include="AssetManager\TexturePngResource.hpp" />
     <ClInclude Include="AssetManager\tinyobjToRaylib.hpp" />
     <ClInclude Include="RaylibHelper.hpp" />
+    <ClInclude Include="Projectile.hpp" />
+    <ClInclude Include="ProjectileManager.hpp" />
+    <ClInclude Include="ProjectileRenderer.hpp" />
   </ItemGroup>
 </Project>
