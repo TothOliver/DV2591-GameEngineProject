@@ -64,6 +64,7 @@ int main()
 
     std::string LODName;
     bool higherLODRequested = false;
+    float LODTimer = 0.0;
 
     //Camera creation (obviously)
     Camera camera = { 0 };
@@ -73,7 +74,16 @@ int main()
     camera.fovy = 45.0f;
     camera.projection = CAMERA_PERSPECTIVE;
 
-    float LODTimer = 0.0;
+    //PROJECTILE SYSTEM
+    ProjectileManager projectileManager;
+    projectileManager.Initialize(1000);
+
+    ProjectileRenderer projectileRenderer(rh);
+
+    std::string currentProjectileMesh = "102";
+    std::string currentProjectileTexture = "003";
+
+    float shootCooldown = 0.0f;
 
     while (!WindowShouldClose())
     {
@@ -84,6 +94,9 @@ int main()
             rayTextureReady = true;
         }*/
 
+        float dt = GetFrameTime();
+        shootCooldown -= dt;
+
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
@@ -91,232 +104,193 @@ int main()
         UpdateCamera(&camera, CAMERA_FREE);
         SetMousePosition(width / 2, height / 2);
 
-
-        //PROJECTILE SYSTEM
-        ProjectileManager projectileManager;
-        projectileManager.Initialize(1000);
-
-        ProjectileRenderer projectileRenderer(rh);
-
-        std::string currentProjectileMesh = "102";
-        std::string currentProjectileTexture = "003";
-
-        //progressive stuff
-        std::string LODName;
-        bool higherLODRequested = false;
-
-        //Camera creation
-        Camera camera = { 0 };
-        camera.position = { 0.0f, 0.0f, 10.0f };
-        camera.target = { 0.0f, 0.0f, 0.0f };
-        camera.up = { 0.0f, 1.0f, 0.0f };
-        camera.fovy = 45.0f;
-        camera.projection = CAMERA_PERSPECTIVE;
-
-        float LODTimer = 0.0;
-        float shootCooldown = 0.0f;
-
-        while (!WindowShouldClose())
+        //PROJECTILES
+        if (IsKeyPressed(KEY_NINE)  && shootCooldown <= 0.0f)
         {
-            float dt = GetFrameTime();
-            shootCooldown -= dt;
+            Vector3 forward = Vector3Subtract(camera.target, camera.position);
+            forward = Vector3Normalize(forward);
 
-            BeginDrawing();
-            ClearBackground(RAYWHITE);
+            Vector3 spawnPos = Vector3Add(camera.position, Vector3Scale(forward, 2.0f));
 
-            BeginMode3D(camera);
-            UpdateCamera(&camera, CAMERA_FREE);
-            SetMousePosition(width / 2, height / 2);
+            projectileManager.Create(
+                spawnPos.x, spawnPos.y, spawnPos.z,
+                forward.x, forward.y, forward.z,
+                20.0f,                              // speed
+                5.0f,                               // lifetime
+                currentProjectileMesh,              // GUID from asset manager
+                currentProjectileTexture            // GUID from asset manager
+            );
 
-            //PROJECTILES
-            if (IsKeyPressed(KEY_NINE)  && shootCooldown <= 0.0f)
-            {
-                Vector3 forward = Vector3Subtract(camera.target, camera.position);
-                forward = Vector3Normalize(forward);
+            shootCooldown = 0.1f;
+        }
+        // Change projectile type with number keys
+        if (IsKeyPressed(KEY_SIX))
+        {
+            currentProjectileTexture = "001";
+        }
+        if (IsKeyPressed(KEY_SEVEN))
+        {
+            currentProjectileTexture = "002";
+        }
+        if (IsKeyPressed(KEY_EIGHT))
+        {
+            currentProjectileTexture = "003";
+        }
 
-                Vector3 spawnPos = Vector3Add(camera.position, Vector3Scale(forward, 2.0f));
+        // Update projectiles
+        projectileManager.Update(dt);
 
-                projectileManager.Create(
-                    spawnPos.x, spawnPos.y, spawnPos.z,
-                    forward.x, forward.y, forward.z,
-                    20.0f,                              // speed
-                    5.0f,                               // lifetime
-                    currentProjectileMesh,              // GUID from asset manager
-                    currentProjectileTexture            // GUID from asset manager
-                );
+        if (IsKeyPressed(KEY_ONE))
+        {
+            am.LoadAsync("001");
+            Texture2D toe = rh.GetTexture("001");
+            SetTexture(box1, toe);
+        }
 
-                shootCooldown = 0.1f;
-            }
-            // Change projectile type with number keys
-            if (IsKeyPressed(KEY_SIX))
-            {
-                currentProjectileTexture = "001";
-            }
-            if (IsKeyPressed(KEY_SEVEN))
-            {
-                currentProjectileTexture = "002";
-            }
-            if (IsKeyPressed(KEY_EIGHT))
-            {
-                currentProjectileTexture = "003";
-            }
+        if (IsKeyPressed(KEY_TWO))
+        {
+            am.LoadAsync("002");
+            Texture2D hatley = rh.GetTexture("002");
+            SetTexture(box2, hatley);
+        }
 
-            // Update projectiles
-            projectileManager.Update(dt);
+        if (IsKeyPressed(KEY_THREE))
+        {
+            am.LoadAsync("003");
+            Texture2D noise = rh.GetTexture("003");
+            SetTexture(box3, noise);
+            SetTexture(box4, noise);
+            SetTexture(box5, noise);
+            SetTexture(sphere, noise);
+        }
 
-            if (IsKeyPressed(KEY_ONE))
-            {
-                am.LoadAsync("001");
-                Texture2D toe = rh.GetTexture("001");
-                SetTexture(box1, toe);
-            }
+        /*if (IsKeyPressed(KEY_FOUR))
+        {
+            am.LoadAsync("004_lod0");
+            std::shared_ptr<IResource> myResource = am.TryGet("004_lod0");
 
-            if (IsKeyPressed(KEY_TWO))
-            {
-                am.LoadAsync("002");
-                Texture2D hatley = rh.GetTexture("002");
-                SetTexture(box2, hatley);
-            }
+            if (myResource) {
+                SetTexture(bigBox, myResource);
 
-            if (IsKeyPressed(KEY_THREE))
-            {
-                am.LoadAsync("003");
-                Texture2D noise = rh.GetTexture("003");
-                SetTexture(box3, noise);
-                SetTexture(box4, noise);
-                SetTexture(box5, noise);
-                SetTexture(sphere, noise);
-            }
-
-            /*if (IsKeyPressed(KEY_FOUR))
-            {
-                am.LoadAsync("004_lod0");
-                std::shared_ptr<IResource> myResource = am.TryGet("004_lod0");
-
-                if (myResource) {
-                    SetTexture(bigBox, myResource);
-
-                    auto progRes = std::dynamic_pointer_cast<ProgressiveTexturePng>(myResource);
-                    if (progRes) {
-                        progRes->SetLODInfo(2);
-                        LODName = progRes->GetNextLODGuid();
-                        am.LoadAsync(LODName);
-                        higherLODRequested = true;
-                        LODTimer = 0.0f;
-                    }
-                }
-            }*/
-
-            if (IsKeyPressed(KEY_FIVE))
-            {
-                for (int i = 200; i < 220; i++)
-                {
-                    am.LoadAsync(std::to_string(i));
+                auto progRes = std::dynamic_pointer_cast<ProgressiveTexturePng>(myResource);
+                if (progRes) {
+                    progRes->SetLODInfo(2);
+                    LODName = progRes->GetNextLODGuid();
+                    am.LoadAsync(LODName);
+                    higherLODRequested = true;
+                    LODTimer = 0.0f;
                 }
             }
+        }*/
 
-            /*if (higherLODRequested)
+        if (IsKeyPressed(KEY_FIVE))
+        {
+            for (int i = 200; i < 220; i++)
             {
-                LODTimer += GetFrameTime();
+                am.LoadAsync(std::to_string(i));
+            }
+        }
 
-                if (LODTimer >= 2.0f)
-                {
-                    auto higherLODRes = am.TryGet(LODName);
+        /*if (higherLODRequested)
+        {
+            LODTimer += GetFrameTime();
 
-                    if (higherLODRes) {
-                        auto currentRes = am.TryGet("004_lod0");
-                        auto currentTex = std::dynamic_pointer_cast<ProgressiveTexturePng>(currentRes);
-                        auto higherTex = std::dynamic_pointer_cast<ProgressiveTexturePng>(higherLODRes);
+            if (LODTimer >= 2.0f)
+            {
+                auto higherLODRes = am.TryGet(LODName);
 
-                        if (currentTex && higherTex)
+                if (higherLODRes) {
+                    auto currentRes = am.TryGet("004_lod0");
+                    auto currentTex = std::dynamic_pointer_cast<ProgressiveTexturePng>(currentRes);
+                    auto higherTex = std::dynamic_pointer_cast<ProgressiveTexturePng>(higherLODRes);
+
+                    if (currentTex && higherTex)
+                    {
+                        bool loaded = currentTex->LoadHigherLOD(
+                            std::vector<uint8_t>(higherTex->GetImageData(),
+                                higherTex->GetImageData() + (higherTex->GetWidth() * higherTex->GetHeight() * 4)),
+                            higherTex->GetWidth(),
+                            higherTex->GetHeight()
+                        );
+
+                        if (loaded)
                         {
-                            bool loaded = currentTex->LoadHigherLOD(
-                                std::vector<uint8_t>(higherTex->GetImageData(),
-                                    higherTex->GetImageData() + (higherTex->GetWidth() * higherTex->GetHeight() * 4)),
-                                higherTex->GetWidth(),
-                                higherTex->GetHeight()
-                            );
+                            currentTex->TryUpgrade();
+                            SetTexture(bigBox, currentRes);
 
-                            if (loaded)
+                            am.Unload(LODName);
+
+                            if (currentTex->HasHigherLOD())
                             {
-                                currentTex->TryUpgrade();
-                                SetTexture(bigBox, currentRes);
-
-                                am.Unload(LODName);
-
-                                if (currentTex->HasHigherLOD())
-                                {
-                                    LODName = currentTex->GetNextLODGuid();
-                                    am.LoadAsync(LODName);
-                                    LODTimer = 0.0f;
-                                }
-                                else
-                                {
-                                    higherLODRequested = false;
-                                }
+                                LODName = currentTex->GetNextLODGuid();
+                                am.LoadAsync(LODName);
+                                LODTimer = 0.0f;
+                            }
+                            else
+                            {
+                                higherLODRequested = false;
                             }
                         }
                     }
                 }
-            }*/
-
-
-
-            if (IsKeyPressed(KEY_X))
-            {
-                rh.ReleaseTexture("001");
-                rh.ReleaseTexture("002");
-                rh.ReleaseTexture("003");
-                rh.ReleaseTexture("004_lod0");
             }
+        }*/
 
-            //Background
-            DrawModel(background, { 0, -22, 0 }, 20.0f, DARKGREEN);
-            DrawModel(background, { 40, 0, 0 }, 20.0f, DARKBLUE);
-            DrawModel(background, { -40, 0, 0 }, 20.0f, DARKBLUE);
-            DrawModel(background, { 0, 0, 40 }, 20.0f, DARKBLUE);
-            DrawModel(background, { 0, 0, -40 }, 20.0f, LIGHTGRAY);
-            DrawModel(background, { 0, 30, 0 }, 20.0f, DARKBLUE);
 
-            //small boxes
-            DrawModel(dynamicModel, { -3, 3, -3 }, 1.0f, DARKGRAY);
-            DrawModel(box1, { 0, 3, -3 }, 1.0f, WHITE);
-            DrawModel(box2, { 3, 3, -3 }, 1.0f, WHITE);
-            DrawModel(box3, { -3, 0, -3 }, 1.0f, WHITE);
-            DrawModel(box4, { 0, 0, -3 }, 1.0f, WHITE);
-            DrawModel(box5, { 3, 0, -3 }, 1.0f, WHITE);
 
-            //Progressive
-            DrawModel(bigBox, { -12, 1, -6 }, 2.0f, WHITE);
-
-            //test
-            DrawModel(sphere, { 10, 1, -3 }, 2.0f, WHITE);
-            DrawModel(tree, { 10, -2, -10 }, 0.5f, LIME);
-            DrawModel(table, { -10, -1, -15 }, 0.02f, DARKBROWN);
-            DrawModel(figures, { 15, -2, 15 }, 0.15f, RED);
-            
-
-            //RENDER PROJECTILES
-
-            projectileRenderer.RenderProjectiles(projectileManager);
-
-            EndMode3D();
-
-            //2D
-            DrawRectangle(20, 20, 330, 170, Fade(SKYBLUE, 0.5f));
-            DrawRectangleLines(20, 20, 330, 170, BLUE);
-
-            DrawText("Controls:", 30, 30, 30, BLACK);
-            DrawText("1-3 -> Load textures", 30, 60, 30, BLACK);
-            DrawText("4 -> Multiresolution", 30, 90, 30, BLACK);
-            DrawText("5 -> Load much", 30, 120, 30, BLACK);
-            DrawText("x -> Clean all", 30, 150, 30, BLACK);
-
-            EndDrawing();
+        if (IsKeyPressed(KEY_X))
+        {
+            rh.ReleaseTexture("001");
+            rh.ReleaseTexture("002");
+            rh.ReleaseTexture("003");
+            rh.ReleaseTexture("004_lod0");
         }
 
-        projectileManager.Shutdown();
-        CloseWindow();
-        return 0;
+        //Background
+        DrawModel(background, { 0, -22, 0 }, 20.0f, DARKGREEN);
+        DrawModel(background, { 40, 0, 0 }, 20.0f, DARKBLUE);
+        DrawModel(background, { -40, 0, 0 }, 20.0f, DARKBLUE);
+        DrawModel(background, { 0, 0, 40 }, 20.0f, DARKBLUE);
+        DrawModel(background, { 0, 0, -40 }, 20.0f, LIGHTGRAY);
+        DrawModel(background, { 0, 30, 0 }, 20.0f, DARKBLUE);
+
+        //small boxes
+        DrawModel(dynamicModel, { -3, 3, -3 }, 1.0f, DARKGRAY);
+        DrawModel(box1, { 0, 3, -3 }, 1.0f, WHITE);
+        DrawModel(box2, { 3, 3, -3 }, 1.0f, WHITE);
+        DrawModel(box3, { -3, 0, -3 }, 1.0f, WHITE);
+        DrawModel(box4, { 0, 0, -3 }, 1.0f, WHITE);
+        DrawModel(box5, { 3, 0, -3 }, 1.0f, WHITE);
+
+        //Progressive
+        DrawModel(bigBox, { -12, 1, -6 }, 2.0f, WHITE);
+
+        //test
+        DrawModel(sphere, { 10, 1, -3 }, 2.0f, WHITE);
+        DrawModel(tree, { 10, -2, -10 }, 0.5f, LIME);
+        DrawModel(table, { -10, -1, -15 }, 0.02f, DARKBROWN);
+        DrawModel(figures, { 15, -2, 15 }, 0.15f, RED);
+            
+
+        //RENDER PROJECTILES
+
+        projectileRenderer.RenderProjectiles(projectileManager);
+
+        EndMode3D();
+
+        //2D
+        DrawRectangle(20, 20, 330, 170, Fade(SKYBLUE, 0.5f));
+        DrawRectangleLines(20, 20, 330, 170, BLUE);
+
+        DrawText("Controls:", 30, 30, 30, BLACK);
+        DrawText("1-3 -> Load textures", 30, 60, 30, BLACK);
+        DrawText("4 -> Multiresolution", 30, 90, 30, BLACK);
+        DrawText("5 -> Load much", 30, 120, 30, BLACK);
+        DrawText("x -> Clean all", 30, 150, 30, BLACK);
+
+        EndDrawing();
     }
+    projectileManager.Shutdown();
+    CloseWindow();
+    return 0;
 }
