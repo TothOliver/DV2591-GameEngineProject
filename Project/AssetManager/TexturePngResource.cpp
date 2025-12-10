@@ -19,10 +19,15 @@ bool TexturePng::Load(const std::vector<uint8_t>& data)
 		return false;
 	}
 
-	m_imageData = (unsigned char*)img.data;
+	size_t imgSize = img.width * img.height * 4;
+	m_imageData = (unsigned char*)malloc(imgSize);
+	memcpy(m_imageData, img.data, imgSize);
+
 	m_width = img.width;
 	m_height = img.height;
 	m_channels = 4;
+
+	UnloadImage(img);
 
 	return true;
 }
@@ -32,9 +37,9 @@ bool TexturePng::Unload()
 	//unload un texture
 	if (m_imageData)
 	{
-		UnloadImage({ m_imageData, m_width, m_height, m_channels });
+		//free(m_imageData);
 		m_imageData = nullptr;
-		m_height = 0, m_width = 0, m_channels = 0, m_size = 0;
+		m_height = m_width = m_channels = m_size = 0;
 		return true;
 	}
 
