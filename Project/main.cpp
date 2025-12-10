@@ -39,23 +39,18 @@ int main()
     RaylibHelper rh(am);
     
     //Dynamic model using GUID (Texture isnt set here, it is set when fully loaded)
-    auto obj = am.Load("101");
-    //auto mesh = std::dynamic_pointer_cast<MeshObj>(obj);
+    am.Load("101");
     Model dynamicModel = rh.GetModel("101", "dynamicModel");
     Model background = rh.GetModel("101", "background");
     Model box1 = rh.GetModel("101", "box1");
-    am.Load("001");
-    Texture2D toe = rh.GetTexture("001");
-    SetTexture(box1, toe);
-    /*Model box2 = ConvertAttribToModel(mesh->GetAttrib(), mesh->GetShapes());
-    Model box3 = ConvertAttribToModel(mesh->GetAttrib(), mesh->GetShapes());
-    Model box4 = ConvertAttribToModel(mesh->GetAttrib(), mesh->GetShapes());
-    Model box5 = ConvertAttribToModel(mesh->GetAttrib(), mesh->GetShapes());
-    Model bigBox = ConvertAttribToModel(mesh->GetAttrib(), mesh->GetShapes());
+    Model box2 = rh.GetModel("101", "box2");
+    Model box3 = rh.GetModel("101", "box3");
+    Model box4 = rh.GetModel("101", "box4");
+    Model box5 = rh.GetModel("101", "box5");
+    Model bigBox = rh.GetModel("101", "bigBox");
 
-    auto roundObj = am.Load("102");
-    auto sphereMesh = std::dynamic_pointer_cast<MeshObj>(roundObj);
-    Model sphere = ConvertAttribToModel(sphereMesh->GetAttrib(), sphereMesh->GetShapes());*/
+    am.Load("102");
+    Model sphere = rh.GetModel("102", "sphere");
 
     //progressive stuff
 
@@ -91,31 +86,28 @@ int main()
         if (IsKeyPressed(KEY_ONE))
         {
             am.LoadAsync("001");
-            std::shared_ptr<IResource> myResource = am.TryGet("001");
-            //Model model = rh.GetModel("101");
-            Texture2D texture = rh.GetTexture("001");
-            //SetTexture(model, texture);
+            Texture2D toe = rh.GetTexture("001");
+            SetTexture(box1, toe);
         }
 
-        /*if (IsKeyPressed(KEY_TWO))
+        if (IsKeyPressed(KEY_TWO))
         {
             am.LoadAsync("002");
-            box1.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture.id = 1;
-            std::shared_ptr<IResource> myResource = am.TryGet("002");
-            SetTexture(box2, myResource);
+            Texture2D hatley = rh.GetTexture("002");
+            SetTexture(box2, hatley);
         }
 
         if (IsKeyPressed(KEY_THREE))
         {
             am.LoadAsync("003");
-            std::shared_ptr<IResource> myResource = am.TryGet("003");
-            SetTexture(box3, myResource);
-            SetTexture(box4, myResource);
-            SetTexture(box5, myResource);
-            SetTexture(sphere, myResource);
+            Texture2D noise = rh.GetTexture("003");
+            SetTexture(box3, noise);
+            SetTexture(box4, noise);
+            SetTexture(box5, noise);
+            SetTexture(sphere, noise);
         }
 
-        if (IsKeyPressed(KEY_FOUR))
+        /*if (IsKeyPressed(KEY_FOUR))
         {
             am.LoadAsync("004_lod0");
             std::shared_ptr<IResource> myResource = am.TryGet("004_lod0");
@@ -132,7 +124,7 @@ int main()
                     LODTimer = 0.0f;
                 }
             }
-        }
+        }*/
 
         if (IsKeyPressed(KEY_FIVE))
         {
@@ -142,7 +134,7 @@ int main()
             }
         }
 
-        if (higherLODRequested)
+        /*if (higherLODRequested)
         {
             LODTimer += GetFrameTime();
 
@@ -185,28 +177,17 @@ int main()
                     }
                 }
             }
-        }
+        }*/
 
 
 
         if (IsKeyPressed(KEY_X))
         {
-            Texture2D empty{};
-            box1.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = empty;
-            box2.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = empty;
-            box3.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = empty;
-            box4.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = empty;
-            box5.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = empty;
-            bigBox.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = empty;
-            sphere.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = empty;
-
-            am.Unload("001");
-            am.Unload("002");
-            am.Unload("003");
-            am.Unload("004_lod0");
-
-            UnloadTexture(empty);
-        }*/
+            rh.ReleaseTexture("001");
+            rh.ReleaseTexture("002");
+            rh.ReleaseTexture("003");
+            rh.ReleaseTexture("004_lod0");
+        }
 
         //Background
         DrawModel(background, { 0, -22, 0 }, 20.0f, DARKGREEN);
@@ -219,7 +200,7 @@ int main()
         //small boxes
         DrawModel(dynamicModel, { -3, 3, -3 }, 1.0f, DARKGRAY);
         DrawModel(box1, { 0, 3, -3 }, 1.0f, WHITE);
-        /*DrawModel(box2, { 3, 3, -3 }, 1.0f, WHITE);
+        DrawModel(box2, { 3, 3, -3 }, 1.0f, WHITE);
         DrawModel(box3, { -3, 0, -3 }, 1.0f, WHITE);
         DrawModel(box4, { 0, 0, -3 }, 1.0f, WHITE);
         DrawModel(box5, { 3, 0, -3 }, 1.0f, WHITE);
@@ -228,7 +209,7 @@ int main()
         DrawModel(bigBox, { -12, 1, -6 }, 2.0f, WHITE);
 
         //test
-        DrawModel(sphere, { 10, 1, -3 }, 2.0f, WHITE);*/
+        DrawModel(sphere, { 10, 1, -3 }, 2.0f, WHITE);
 
         EndMode3D();
 
