@@ -15,7 +15,6 @@ public:
 
     bool IsAlive() const { return m_alive; }
 
-    // Getters for rendering
     float GetPosX() const { return m_posX; }
     float GetPosY() const { return m_posY; }
     float GetPosZ() const { return m_posZ; }
@@ -26,9 +25,6 @@ public:
     const std::string& GetMeshGUID() const { return m_meshGUID; }
     const std::string& GetTextureGUID() const { return m_textureGUID; }
 
-    // Optional: bounds checking for 3D
-    bool IsOutOfBounds(float minX, float minY, float minZ,
-        float maxX, float maxY, float maxZ) const;
 
 private:
     float m_posX = 0.0f;

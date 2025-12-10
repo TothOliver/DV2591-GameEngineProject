@@ -16,6 +16,7 @@
     <ClCompile Include="RaylibHelper.cpp" />
     <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="ProjectileManager.cpp" />
+    <ClCompile Include="ProjectileRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="parser\tiny_obj_loader.h" />

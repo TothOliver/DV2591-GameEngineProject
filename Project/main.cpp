@@ -86,16 +86,14 @@ int main()
         SetMousePosition(width / 2, height / 2);
 
 
-        // === PROJECTILE SYSTEM SETUP ===
+        //PROJECTILE SYSTEM
         ProjectileManager projectileManager;
         projectileManager.Initialize(1000);
 
         ProjectileRenderer projectileRenderer(rh);
 
-        // Define projectile types (can be changed dynamically!)
-        std::string currentProjectileMesh = "102";      // Sphere mesh
-        std::string currentProjectileTexture = "003";   // Noise texture
-        // === END PROJECTILE SETUP ===
+        std::string currentProjectileMesh = "102";
+        std::string currentProjectileTexture = "003";
 
         //progressive stuff
         std::string LODName;
@@ -124,14 +122,12 @@ int main()
             UpdateCamera(&camera, CAMERA_FREE);
             SetMousePosition(width / 2, height / 2);
 
-            // === PROJECTILE SHOOTING ===
+            //PROJECTILES
             if (IsKeyPressed(KEY_NINE)  && shootCooldown <= 0.0f)
             {
-                // Calculate 3D shoot direction from camera
                 Vector3 forward = Vector3Subtract(camera.target, camera.position);
                 forward = Vector3Normalize(forward);
 
-                // Spawn projectile in front of camera
                 Vector3 spawnPos = Vector3Add(camera.position, Vector3Scale(forward, 2.0f));
 
                 projectileManager.Create(
@@ -148,20 +144,16 @@ int main()
             // Change projectile type with number keys
             if (IsKeyPressed(KEY_SIX))
             {
-                currentProjectileTexture = "001";  // Change to toe texture
+                currentProjectileTexture = "001";
             }
             if (IsKeyPressed(KEY_SEVEN))
             {
-                currentProjectileTexture = "002";  // Change to hatley texture
+                currentProjectileTexture = "002";
             }
             if (IsKeyPressed(KEY_EIGHT))
             {
-                currentProjectileTexture = "003";  // Change to noise texture
+                currentProjectileTexture = "003";
             }
-
-            // Update projectiles
-            projectileManager.Update(dt);
-            // === END PROJECTILE SHOOTING ===
 
             // Update projectiles
             projectileManager.Update(dt);
@@ -294,6 +286,7 @@ int main()
             //test
             DrawModel(sphere, { 10, 1, -3 }, 2.0f, WHITE);
 
+            //RENDER PROJECTILES
 
             projectileRenderer.RenderProjectiles(projectileManager);
 

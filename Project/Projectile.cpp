@@ -8,7 +8,7 @@ void Projectile::Init(float x, float y, float z, float dirX, float dirY, float d
     m_posY = y;
     m_posZ = z;
 
-    // Normalize direction vector (3D)
+    // Normalize
     float length = std::sqrt(dirX * dirX + dirY * dirY + dirZ * dirZ);
     if (length > 0.0f)
     {
@@ -41,12 +41,4 @@ void Projectile::Update(float dt)
     m_lifetime -= dt;
     if (m_lifetime <= 0.0f)
         m_alive = false;
-}
-
-bool Projectile::IsOutOfBounds(float minX, float minY, float minZ,
-    float maxX, float maxY, float maxZ) const
-{
-    return m_posX < minX || m_posX > maxX ||
-        m_posY < minY || m_posY > maxY ||
-        m_posZ < minZ || m_posZ > maxZ;
 }

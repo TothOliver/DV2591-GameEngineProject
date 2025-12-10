@@ -164,6 +164,7 @@
     <ClCompile Include="MemoryManager\StompAllocator.cpp" />
     <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="ProjectileManager.cpp" />
+    <ClCompile Include="ProjectileRenderer.cpp" />
     <ClCompile Include="RaylibHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
