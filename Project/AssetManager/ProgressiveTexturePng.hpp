@@ -1,3 +1,4 @@
+
 #pragma once
 #include "IResource.hpp"
 #include <vector>
@@ -16,7 +17,14 @@ public:
     bool LoadHigherLOD(const std::vector<uint8_t>& data, int width, int height);
     void SwapToHigherLOD();
 
-    // NEW: Multi-LOD support
+    bool HasPendingLOD() const { return !m_pendingImage.empty(); }
+    bool TryUpgrade() 
+    {
+        if (!HasPendingLOD()) return false;
+        SwapToHigherLOD();
+        return true;
+    }
+
     int GetCurrentLOD() const { return m_currentLOD; }
     int GetMaxLOD() const { return m_maxLOD; }
     bool HasHigherLOD() const { return m_currentLOD < m_maxLOD; }
