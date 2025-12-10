@@ -162,6 +162,7 @@
     <ClCompile Include="MemoryManager\PoolAllocator.cpp" />
     <ClCompile Include="MemoryManager\StackAllocator.cpp" />
     <ClCompile Include="MemoryManager\StompAllocator.cpp" />
+    <ClCompile Include="RaylibHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AssetManager\AssetManager.hpp" />

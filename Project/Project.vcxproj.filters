@@ -13,6 +13,7 @@
     <ClCompile Include="AssetManager\ProgressiveTexturePng.cpp" />
     <ClCompile Include="AssetManager\ResourceFactory.cpp" />
     <ClCompile Include="AssetManager\TexturePngResource.cpp" />
+    <ClCompile Include="RaylibHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="parser\tiny_obj_loader.h" />
