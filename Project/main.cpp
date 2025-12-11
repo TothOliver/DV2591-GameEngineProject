@@ -1,12 +1,11 @@
 #include "AssetManager/PackagingTool.hpp"
 #include "RaylibHelper.hpp"
-#include "raylib.h"
+#include "ProjectileManager.hpp"
+#include "ProjectileRenderer.hpp"
 #include "raymath.h"
 #include <iostream>
 #include <string>
 #include <memory>
-#include "ProjectileManager.hpp"
-#include "ProjectileRenderer.hpp"
 
 void SetTexture(Model& model, Texture2D& texture)
 {
@@ -53,6 +52,7 @@ int main()
     am.Load("102");
     Model sphere = rh.GetModel("102", "sphere");
 
+    //Fun models :)
     am.Load("103");
     Model tree = rh.GetModel("103", "tree");
     am.Load("104");
@@ -61,7 +61,6 @@ int main()
     Model figures = rh.GetModel("105", "figures");
 
     //progressive stuff
-
     std::string LODName;
     bool higherLODRequested = false;
     float LODTimer = 0.0;
@@ -87,13 +86,6 @@ int main()
 
     while (!WindowShouldClose())
     {
-        /*if (!rayTextureReady)
-        {
-            std::shared_ptr<IResource> baseRes = am.TryGet("001");
-            SetTexture(dynamicModel, baseRes);
-            rayTextureReady = true;
-        }*/
-
         float dt = GetFrameTime();
         shootCooldown -= dt;
 
@@ -104,59 +96,20 @@ int main()
         UpdateCamera(&camera, CAMERA_FREE);
         SetMousePosition(width / 2, height / 2);
 
-        //PROJECTILES
-        if (IsKeyPressed(KEY_NINE)  && shootCooldown <= 0.0f)
-        {
-            Vector3 forward = Vector3Subtract(camera.target, camera.position);
-            forward = Vector3Normalize(forward);
-
-            Vector3 spawnPos = Vector3Add(camera.position, Vector3Scale(forward, 2.0f));
-
-            projectileManager.Create(
-                spawnPos.x, spawnPos.y, spawnPos.z,
-                forward.x, forward.y, forward.z,
-                20.0f,                              // speed
-                5.0f,                               // lifetime
-                currentProjectileMesh,              // GUID from asset manager
-                currentProjectileTexture            // GUID from asset manager
-            );
-
-            shootCooldown = 0.1f;
-        }
-        // Change projectile type with number keys
-        if (IsKeyPressed(KEY_SIX))
-        {
-            currentProjectileTexture = "001";
-        }
-        if (IsKeyPressed(KEY_SEVEN))
-        {
-            currentProjectileTexture = "002";
-        }
-        if (IsKeyPressed(KEY_EIGHT))
-        {
-            currentProjectileTexture = "003";
-        }
-
-        // Update projectiles
-        projectileManager.Update(dt);
-
         if (IsKeyPressed(KEY_ONE))
         {
-            am.LoadAsync("001");
             Texture2D toe = rh.GetTexture("001");
             SetTexture(box1, toe);
         }
 
         if (IsKeyPressed(KEY_TWO))
         {
-            am.LoadAsync("002");
             Texture2D hatley = rh.GetTexture("002");
             SetTexture(box2, hatley);
         }
 
         if (IsKeyPressed(KEY_THREE))
         {
-            am.LoadAsync("003");
             Texture2D noise = rh.GetTexture("003");
             SetTexture(box3, noise);
             SetTexture(box4, noise);
@@ -246,6 +199,42 @@ int main()
             rh.ReleaseTexture("004_lod0");
         }
 
+        //PROJECTILES
+        if (IsKeyPressed(KEY_NINE)  && shootCooldown <= 0.0f)
+        {
+            Vector3 forward = Vector3Subtract(camera.target, camera.position);
+            forward = Vector3Normalize(forward);
+
+            Vector3 spawnPos = Vector3Add(camera.position, Vector3Scale(forward, 2.0f));
+
+            projectileManager.Create(
+                spawnPos.x, spawnPos.y, spawnPos.z,
+                forward.x, forward.y, forward.z,
+                20.0f,                              // speed
+                5.0f,                               // lifetime
+                currentProjectileMesh,              // GUID from asset manager
+                currentProjectileTexture            // GUID from asset manager
+            );
+
+            shootCooldown = 0.1f;
+        }
+        // Change projectile type with number keys
+        if (IsKeyPressed(KEY_SIX))
+        {
+            currentProjectileTexture = "001";
+        }
+        if (IsKeyPressed(KEY_SEVEN))
+        {
+            currentProjectileTexture = "002";
+        }
+        if (IsKeyPressed(KEY_EIGHT))
+        {
+            currentProjectileTexture = "003";
+        }
+
+        // Update projectiles
+        projectileManager.Update(dt);
+
         //Background
         DrawModel(background, { 0, -22, 0 }, 20.0f, DARKGREEN);
         DrawModel(background, { 40, 0, 0 }, 20.0f, DARKBLUE);
@@ -273,7 +262,6 @@ int main()
             
 
         //RENDER PROJECTILES
-
         projectileRenderer.RenderProjectiles(projectileManager);
 
         EndMode3D();
