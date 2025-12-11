@@ -156,6 +156,7 @@
     <ClCompile Include="AssetManager\ProgressiveTexturePng.cpp" />
     <ClCompile Include="AssetManager\ResourceFactory.cpp" />
     <ClCompile Include="AssetManager\TexturePngResource.cpp" />
+    <ClCompile Include="ExplosionSystem.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MemoryManager\BuddyAllocator.cpp" />
     <ClCompile Include="MemoryManager\Memory.cpp" />
@@ -175,6 +176,7 @@
     <ClInclude Include="AssetManager\stb_image.h" />
     <ClInclude Include="AssetManager\TexturePngResource.hpp" />
     <ClInclude Include="AssetManager\tinyobjToRaylib.hpp" />
+    <ClInclude Include="ExplosionSystem.hpp" />
     <ClInclude Include="MemoryManager\BuddyAllocator.hpp" />
     <ClInclude Include="MemoryManager\Memory.hpp" />
     <ClInclude Include="MemoryManager\PoolAllocator.hpp" />

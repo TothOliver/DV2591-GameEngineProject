@@ -9,6 +9,10 @@ ExplosionSystem::ExplosionSystem(StackAllocator& frameAllocator)
     m_explosions.reserve(50);
 }
 
+ExplosionSystem::~ExplosionSystem()
+{
+}
+
 void ExplosionSystem::AddExplosion(const Vector3& position, float radius, float duration)
 {
     Explosion ex;
