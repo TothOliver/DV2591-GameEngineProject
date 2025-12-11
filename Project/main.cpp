@@ -41,7 +41,6 @@ void DrawStackAllocatorOverlay(const MemoryDebugInfo& info)
         "Used: %.1f / %.1f KB", usedKB, capKB);
     DrawText(buffer, panelX + 10, panelY + 25, 14, RAYWHITE);
 
-    // bar
     float barX = panelX + 10;
     float barY = panelY + 40;
     float barW = panelW - 20;
@@ -55,8 +54,6 @@ void DrawStackAllocatorOverlay(const MemoryDebugInfo& info)
     DrawRectangle(barX, barY, barW * ratio, barH, GREEN);
 }
 
-
-
 int main()
 {
     //packaging tool
@@ -66,7 +63,7 @@ int main()
     //Asset manager
     AssetManager am(10 * 1024 * 1024, "Assets.bundle");
 
-    StackAllocator frameAllocator(1024 * 1024);  
+    StackAllocator frameAllocator(64 * 1024);  
     ExplosionSystem explosionSystem(frameAllocator);
     MemoryDebugInfo g_memoryDebug;
 
@@ -121,8 +118,11 @@ int main()
 
         if (IsKeyPressed(KEY_T))
         {
-            Vector3 explosionPos = { 0, 0, 0 };
-            explosionSystem.AddExplosion(explosionPos, 4.0f, 1.0f);
+            for (int i = 0; i < 3; ++i)
+            {
+                Vector3 pos = { i * 2.0f, 0.0f, 0.0f };
+                explosionSystem.AddExplosion(pos, 4.0f, 1.0f);
+            }
         }
 
         explosionSystem.BuildRendererData();
