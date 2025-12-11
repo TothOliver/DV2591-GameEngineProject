@@ -17,6 +17,15 @@ struct MemoryDebugInfo
     float stackUsageRatio = 0.0f;
 };
 
+struct AssetDebugInfo
+{
+    size_t memoryUsedBytes = 0;
+    size_t memoryLimitBytes = 0;
+    size_t loadedResourceCount = 0;
+    size_t asyncJobsInFlight = 0;
+    size_t totalEvictions = 0;
+};
+
 void SetTexture(Model& model, Texture2D& texture)
 {
     model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
@@ -57,6 +66,62 @@ void DrawStackAllocatorOverlay(const MemoryDebugInfo& info)
     DrawRectangle(barX, barY, barW * ratio, barH, GREEN);
 }
 
+void DrawAssetManagerOverlay(const AssetDebugInfo info)
+{
+    const float margin = 10.0f;
+    const float panelW = 260.0f;
+    const float panelH = 90.0f;
+
+    // Place it just BELOW the stack allocator panel
+    const float panelX = GetScreenWidth() - panelW - margin;
+    const float panelY = margin + 60.0f + 10.0f; // stack panel height + small gap
+
+    DrawRectangle(panelX, panelY, panelW, panelH, Fade(BLACK, 0.6f));
+    DrawRectangleLines(panelX, panelY, panelW, panelH, RAYWHITE);
+
+    DrawText("Resource Manager", panelX + 10, panelY + 5, 16, RAYWHITE);
+
+    // Memory usage
+    float usedMB = info.memoryUsedBytes / (1024.0f * 1024.0f);
+    float capMB = info.memoryLimitBytes / (1024.0f * 1024.0f);
+
+    char buffer[128];
+    std::snprintf(buffer, sizeof(buffer),
+        "Mem: %.1f / %.1f MB", usedMB, capMB);
+    DrawText(buffer, panelX + 10, panelY + 25, 14, RAYWHITE);
+
+    // Memory bar
+    const float barX = panelX + 10;
+    const float barY = panelY + 40;
+    const float barW = panelW - 20;
+    const float barH = 10;
+
+    float ratio = 0.0f;
+    if (info.memoryLimitBytes > 0)
+    {
+        ratio = static_cast<float>(info.memoryUsedBytes) /
+            static_cast<float>(info.memoryLimitBytes);
+    }
+    if (ratio < 0.0f) ratio = 0.0f;
+    if (ratio > 1.0f) ratio = 1.0f;
+
+    DrawRectangle(barX, barY, barW, barH, DARKGRAY);
+    DrawRectangle(barX, barY, barW * ratio, barH, GREEN);
+
+    // Loaded resources and async jobs
+    std::snprintf(buffer, sizeof(buffer),
+        "Loaded: %zu | Jobs: %zu",
+        info.loadedResourceCount,
+        info.asyncJobsInFlight);
+    DrawText(buffer, panelX + 10, panelY + 55, 14, RAYWHITE);
+
+    // Optional evictions line
+    std::snprintf(buffer, sizeof(buffer),
+        "Evictions: %zu",
+        info.totalEvictions);
+    DrawText(buffer, panelX + 10, panelY + 70, 14, RAYWHITE);
+}
+
 int main()
 {
     //packaging tool
@@ -65,6 +130,7 @@ int main()
 
     //Asset manager
     AssetManager am(64 * 1024 * 1024, "Assets.bundle");
+    AssetDebugInfo g_assetsDebug;
 
     StackAllocator frameAllocator(64 * 1024);  
     ExplosionSystem explosionSystem(frameAllocator);
@@ -157,6 +223,11 @@ int main()
         g_memoryDebug.stackUsedBytes = frameAllocator.GetUsed();
         g_memoryDebug.stackCapacityBytes = frameAllocator.GetCapacity();
         g_memoryDebug.stackUsageRatio = frameAllocator.GetUsageRatio();
+        g_assetsDebug.memoryLimitBytes = 64 * 1024 * 1024;
+        g_assetsDebug.memoryUsedBytes = 0;
+        g_assetsDebug.loadedResourceCount = 0;
+        g_assetsDebug.asyncJobsInFlight = 0;
+        g_assetsDebug.totalEvictions = 0;
 
         BeginDrawing();
         ClearBackground(RAYWHITE);
@@ -186,25 +257,6 @@ int main()
             SetTexture(sphere, noise);
         }
 
-        /*if (IsKeyPressed(KEY_FOUR))
-        {
-            am.LoadAsync("004_lod0");
-            std::shared_ptr<IResource> myResource = am.TryGet("004_lod0");
-
-            if (myResource) {
-                SetTexture(bigBox, myResource);
-
-                auto progRes = std::dynamic_pointer_cast<ProgressiveTexturePng>(myResource);
-                if (progRes) {
-                    progRes->SetLODInfo(2);
-                    LODName = progRes->GetNextLODGuid();
-                    am.LoadAsync(LODName);
-                    higherLODRequested = true;
-                    LODTimer = 0.0f;
-                }
-            }
-        }*/
-
         if (IsKeyPressed(KEY_FIVE))
         {
             for (int i = 200; i < 220; i++)
@@ -212,53 +264,6 @@ int main()
                 am.LoadAsync(std::to_string(i));
             }
         }
-
-        /*if (higherLODRequested)
-        {
-            LODTimer += GetFrameTime();
-
-            if (LODTimer >= 2.0f)
-            {
-                auto higherLODRes = am.TryGet(LODName);
-
-                if (higherLODRes) {
-                    auto currentRes = am.TryGet("004_lod0");
-                    auto currentTex = std::dynamic_pointer_cast<ProgressiveTexturePng>(currentRes);
-                    auto higherTex = std::dynamic_pointer_cast<ProgressiveTexturePng>(higherLODRes);
-
-                    if (currentTex && higherTex)
-                    {
-                        bool loaded = currentTex->LoadHigherLOD(
-                            std::vector<uint8_t>(higherTex->GetImageData(),
-                                higherTex->GetImageData() + (higherTex->GetWidth() * higherTex->GetHeight() * 4)),
-                            higherTex->GetWidth(),
-                            higherTex->GetHeight()
-                        );
-
-                        if (loaded)
-                        {
-                            currentTex->TryUpgrade();
-                            SetTexture(bigBox, currentRes);
-
-                            am.Unload(LODName);
-
-                            if (currentTex->HasHigherLOD())
-                            {
-                                LODName = currentTex->GetNextLODGuid();
-                                am.LoadAsync(LODName);
-                                LODTimer = 0.0f;
-                            }
-                            else
-                            {
-                                higherLODRequested = false;
-                            }
-                        }
-                    }
-                }
-            }
-        }*/
-
-
 
         if (IsKeyPressed(KEY_X))
         {
@@ -358,6 +363,7 @@ int main()
         DrawText("T -> EXPLOSION", 30, 180, 30, BLACK);
 
         DrawStackAllocatorOverlay(g_memoryDebug);
+        DrawAssetManagerOverlay(g_assetsDebug);
 
         EndDrawing();
     }
