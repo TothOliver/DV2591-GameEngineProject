@@ -1,4 +1,4 @@
-#include "AssetManager/PackagingTool.hpp"
+﻿#include "AssetManager/PackagingTool.hpp"
 #include "RaylibHelper.hpp"
 #include "raylib.h"
 
@@ -23,10 +23,12 @@ void SetTexture(Model& model, Texture2D& texture)
 
 void DrawStackAllocatorOverlay(const MemoryDebugInfo& info)
 {
-    const float panelX = 10.0f;
-    const float panelY = 10.0f;
+    const float margin = 10.0f;
     const float panelW = 260.0f;
     const float panelH = 60.0f;
+
+    const float panelX = GetScreenWidth() - panelW - margin;
+    const float panelY = margin;
 
     DrawRectangle(panelX, panelY, panelW, panelH, Fade(BLACK, 0.6f));
     DrawRectangleLines(panelX, panelY, panelW, panelH, RAYWHITE);
