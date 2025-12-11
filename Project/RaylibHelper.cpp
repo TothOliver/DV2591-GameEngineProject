@@ -89,6 +89,32 @@ void RaylibHelper::ReleaseModel(std::string name)
     }
 }
 
+void RaylibHelper::ForceUnloadTexture(std::string GUID)
+{
+    auto it = m_textures.find(GUID);
+    if (it == m_textures.end())
+    {
+        return;
+    }
+
+    UnloadTexture(it->second.texture);
+    m_textures.erase(it);
+    m_assetManager->Unload(GUID); //maybe
+}
+
+void RaylibHelper::ForceUnloadModel(std::string name)
+{
+    auto it = m_models.find(name);
+    if (it == m_models.end())
+    {
+        return;
+    }
+
+    UnloadModel(it->second.model);
+    m_models.erase(it);
+    //m_assetManager->Unload(GUID); //maybe
+}
+
 void RaylibHelper::CleanUp()
 {
 	//Unload all models

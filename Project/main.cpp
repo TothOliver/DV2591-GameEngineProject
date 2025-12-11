@@ -193,10 +193,10 @@ int main()
 
         if (IsKeyPressed(KEY_X))
         {
-            rh.ReleaseTexture("001");
-            rh.ReleaseTexture("002");
-            rh.ReleaseTexture("003");
-            rh.ReleaseTexture("004_lod0");
+            rh.ForceUnloadTexture("001");
+            rh.ForceUnloadTexture("002");
+            rh.ForceUnloadTexture("003");
+            rh.ForceUnloadTexture("004_lod0");
         }
 
         //PROJECTILES
