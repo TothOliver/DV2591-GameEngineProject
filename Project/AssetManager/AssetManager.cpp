@@ -139,6 +139,20 @@ void AssetManager::DumpLoadedResources() const
     }
 }
 
+void AssetManager::GetDebugInfo(AssetManagerDebugInfo& outinfo) const
+{
+    outinfo.memoryLimit = m_memoryLimit;
+    outinfo.memoryUsed = m_memoryUsed;
+    outinfo.loadedResourceCount = m_loaded.size();
+    outinfo.totalEvictions = m_totalEvictions;
+
+    {
+        std::scoped_lock lock(m_jobQueueMutex);
+        outinfo.asyncQueuedJobs = m_jobQueue.size();
+        outinfo.asyncActiveJobs = m_inAction.size();
+    }
+}
+
 std::vector<uint8_t> AssetManager::ReadFromPackage(const PackageEntry& entry)
 {
     std::ifstream file(m_packagePath, std::ios::binary);
@@ -160,6 +174,7 @@ void AssetManager::EvictIfNeeded(size_t neededMemory)
         m_memoryUsed -= it->second->GetSize();
         it->second->Unload();
         m_loaded.erase(it);
+        ++m_totalEvictions;
         std::cerr << "AssetManager: No space! Evicting resources.\n";
     }
 

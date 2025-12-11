@@ -219,15 +219,18 @@ int main()
         }
 
         explosionSystem.BuildRendererData();
+        AssetManagerDebugInfo amInfo{};
+        am.GetDebugInfo(amInfo);
 
         g_memoryDebug.stackUsedBytes = frameAllocator.GetUsed();
         g_memoryDebug.stackCapacityBytes = frameAllocator.GetCapacity();
         g_memoryDebug.stackUsageRatio = frameAllocator.GetUsageRatio();
-        g_assetsDebug.memoryLimitBytes = 64 * 1024 * 1024;
-        g_assetsDebug.memoryUsedBytes = 0;
-        g_assetsDebug.loadedResourceCount = 0;
-        g_assetsDebug.asyncJobsInFlight = 0;
-        g_assetsDebug.totalEvictions = 0;
+
+        g_assetsDebug.memoryLimitBytes = amInfo.memoryLimit;
+        g_assetsDebug.memoryUsedBytes = amInfo.memoryUsed;
+        g_assetsDebug.loadedResourceCount = amInfo.loadedResourceCount;
+        g_assetsDebug.asyncJobsInFlight = amInfo.asyncQueuedJobs + amInfo.asyncActiveJobs;
+        g_assetsDebug.totalEvictions = amInfo.totalEvictions;
 
         BeginDrawing();
         ClearBackground(RAYWHITE);

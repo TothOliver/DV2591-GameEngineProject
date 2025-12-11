@@ -17,6 +17,16 @@ struct PackageEntry {
     uint32_t size;
 };
 
+struct AssetManagerDebugInfo
+{
+    size_t memoryUsed = 0;
+    size_t memoryLimit = 0;
+    size_t loadedResourceCount = 0;
+    size_t asyncQueuedJobs = 0;
+    size_t asyncActiveJobs = 0;
+    size_t totalEvictions = 0;
+};
+
 class AssetManager {
 public:
     AssetManager(size_t memoryLimitBytes, const std::string& packagePath);
@@ -29,6 +39,8 @@ public:
     std::shared_ptr<IResource> TryGet(const std::string& guid);
 
     void DumpLoadedResources() const;
+
+    void GetDebugInfo(AssetManagerDebugInfo& outinfo) const;
 
 private:
     std::string m_packagePath;
@@ -53,15 +65,12 @@ private:
 
     std::thread m_worker;
     bool m_stopWorker = false;
+    size_t m_totalEvictions = 0;
 
     void WorkerLoop();
-
     std::vector<uint8_t> ReadFromPackage(const PackageEntry& entry);
-
     void EvictIfNeeded(size_t neededMemory);
-
     bool PackageParser();
-
     void EraseJob(const std::string& guid);
 
 };
