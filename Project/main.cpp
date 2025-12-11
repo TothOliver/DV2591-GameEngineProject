@@ -3,13 +3,58 @@
 #include "ProjectileManager.hpp"
 #include "ProjectileRenderer.hpp"
 #include "raymath.h"
+#include "raylib.h"
+#include "MemoryManager/StackAllocator.hpp"
+#include "ExplosionSystem.hpp"
 #include <iostream>
 #include <string>
 #include <memory>
 
+struct MemoryDebugInfo 
+{
+    size_t stackUsedBytes = 0;
+    size_t stackCapacityBytes = 0;
+    float stackUsageRatio = 0.0f;
+};
+
 void SetTexture(Model& model, Texture2D& texture)
 {
     model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
+}
+
+void DrawStackAllocatorOverlay(const MemoryDebugInfo& info)
+{
+    const float margin = 10.0f;
+    const float panelW = 260.0f;
+    const float panelH = 60.0f;
+
+    const float panelX = GetScreenWidth() - panelW - margin;
+    const float panelY = margin;
+
+    DrawRectangle(panelX, panelY, panelW, panelH, Fade(BLACK, 0.6f));
+    DrawRectangleLines(panelX, panelY, panelW, panelH, RAYWHITE);
+
+    DrawText("Stack Allocator", panelX + 10, panelY + 5, 16, RAYWHITE);
+
+    float usedKB = info.stackUsedBytes / 1024.0f;
+    float capKB = info.stackCapacityBytes / 1024.0f;
+
+    char buffer[128];
+    std::snprintf(buffer, sizeof(buffer),
+        "Used: %.1f / %.1f KB", usedKB, capKB);
+    DrawText(buffer, panelX + 10, panelY + 25, 14, RAYWHITE);
+
+    float barX = panelX + 10;
+    float barY = panelY + 40;
+    float barW = panelW - 20;
+    float barH = 10;
+
+    float ratio = info.stackUsageRatio;
+    if (ratio < 0.0f) ratio = 0.0f;
+    if (ratio > 1.0f) ratio = 1.0f;
+
+    DrawRectangle(barX, barY, barW, barH, DARKGRAY);
+    DrawRectangle(barX, barY, barW * ratio, barH, GREEN);
 }
 
 int main()
@@ -20,6 +65,10 @@ int main()
 
     //Asset manager
     AssetManager am(64 * 1024 * 1024, "Assets.bundle");
+
+    StackAllocator frameAllocator(64 * 1024);  
+    ExplosionSystem explosionSystem(frameAllocator);
+    MemoryDebugInfo g_memoryDebug;
 
     //Start loading some stuff
     am.LoadAsync("001");
@@ -87,7 +136,27 @@ int main()
     while (!WindowShouldClose())
     {
         float dt = GetFrameTime();
+
         shootCooldown -= dt;
+
+        frameAllocator.Reset();
+        explosionSystem.Update(dt);
+
+
+        if (IsKeyPressed(KEY_T))
+        {
+            for (int i = 0; i < 3; ++i)
+            {
+                Vector3 pos = { i * 2.0f, 0.0f, 0.0f };
+                explosionSystem.AddExplosion(pos, 4.0f, 1.0f);
+            }
+        }
+
+        explosionSystem.BuildRendererData();
+
+        g_memoryDebug.stackUsedBytes = frameAllocator.GetUsed();
+        g_memoryDebug.stackCapacityBytes = frameAllocator.GetCapacity();
+        g_memoryDebug.stackUsageRatio = frameAllocator.GetUsageRatio();
 
         BeginDrawing();
         ClearBackground(RAYWHITE);
@@ -100,6 +169,10 @@ int main()
         {
             Texture2D toe = rh.GetTexture("001");
             SetTexture(box1, toe);
+            am.LoadAsync("001");
+            std::shared_ptr<IResource> myResource = am.TryGet("001");
+            Texture2D texture = rh.GetTexture("001");
+
         }
 
         if (IsKeyPressed(KEY_TWO))
@@ -264,6 +337,17 @@ int main()
         //RENDER PROJECTILES
         projectileRenderer.RenderProjectiles(projectileManager);
 
+        // ---- Render explosions (simple spheres) ----
+        const ExplosionVertex* verts = explosionSystem.GetVertices();
+        size_t vcount = explosionSystem.GetVertexCount();
+
+        for (size_t i = 0; i < vcount; i++)
+        {
+            const ExplosionVertex& v = verts[i];
+            DrawSphere(v.position, v.size, v.color);
+        }
+
+
         EndMode3D();
 
         //2D
@@ -275,6 +359,8 @@ int main()
         DrawText("4 -> Multiresolution", 30, 90, 30, BLACK);
         DrawText("5 -> Load much", 30, 120, 30, BLACK);
         DrawText("x -> Clean all", 30, 150, 30, BLACK);
+
+        DrawStackAllocatorOverlay(g_memoryDebug);
 
         EndDrawing();
     }

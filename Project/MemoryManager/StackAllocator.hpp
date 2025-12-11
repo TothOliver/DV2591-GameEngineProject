@@ -22,4 +22,5 @@ private:
     size_t m_capacity;
     size_t m_offset;
 
+    size_t m_peak = 0;
 };

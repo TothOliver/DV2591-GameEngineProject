@@ -40,5 +40,5 @@ private:
     ExplosionVertex* m_vertices = nullptr;
     size_t m_vertexCounter = 0;
 
-    static constexpr int PARTICLES_PER_EXPLOSION = 32;
+    static constexpr int PARTICLES_PER_EXPLOSION = 128;
 };
