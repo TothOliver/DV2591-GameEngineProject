@@ -169,10 +169,6 @@ int main()
         {
             Texture2D toe = rh.GetTexture("001");
             SetTexture(box1, toe);
-            am.LoadAsync("001");
-            std::shared_ptr<IResource> myResource = am.TryGet("001");
-            Texture2D texture = rh.GetTexture("001");
-
         }
 
         if (IsKeyPressed(KEY_TWO))
@@ -273,7 +269,7 @@ int main()
         }
 
         //PROJECTILES
-        if (IsKeyPressed(KEY_NINE)  && shootCooldown <= 0.0f)
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && shootCooldown <= 0.0f)
         {
             Vector3 forward = Vector3Subtract(camera.target, camera.position);
             forward = Vector3Normalize(forward);
