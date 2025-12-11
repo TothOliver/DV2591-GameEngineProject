@@ -147,7 +147,7 @@ int main()
         {
             for (int i = 0; i < 3; ++i)
             {
-                Vector3 pos = { i * 2.0f, 0.0f, 0.0f };
+                Vector3 pos = { i * 2.0f, 0.0f, 10.0f };
                 explosionSystem.AddExplosion(pos, 4.0f, 1.0f);
             }
         }
@@ -359,6 +359,7 @@ int main()
         DrawText("4 -> Multiresolution", 30, 90, 30, BLACK);
         DrawText("5 -> Load much", 30, 120, 30, BLACK);
         DrawText("x -> Clean all", 30, 150, 30, BLACK);
+        DrawText("T -> EXPLOSION", 30, 180, 30, BLACK);
 
         DrawStackAllocatorOverlay(g_memoryDebug);
 
