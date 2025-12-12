@@ -1,5 +1,10 @@
-101,Assets/cube.obj,Mesh
-102,Assets/sphere.obj,Mesh
-106,Assets/snowman-hat.obj,Mesh
-107,Assets/colormap.png,TexturePng
+cube,Assets/cube.obj,Mesh
+sphere,Assets/sphere.obj,Mesh,
+snowman,Assets/snowman-hat.obj,Mesh
+snowpile,Assets/snow-pile.obj,Mesh
+snowflat,Assets/snow-flat-large.obj,Mesh
+tree,Assets/tree.obj,Mesh
+treeA,Assets/tree-snow-a.obj,Mesh
+treeB,Assets/tree-snow-b.obj,Mesh
+colormap,Assets/colormap.png,TexturePng
 

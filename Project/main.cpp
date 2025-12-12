@@ -149,19 +149,28 @@ int main()
     int height = 720;
     InitWindow(width, height, "Tony Rickardsson");
     SetTargetFPS(60);
+    DisableCursor();
 
     //Raylib helper
     RaylibHelper rh(am);
     
     //Dynamic model using GUID (Texture isnt set here, it is set when fully loaded)
-    am.Load("101");
-    Model background = rh.GetModel("101", "background");
-
-    am.Load("102");
-    Model sphere = rh.GetModel("102", "sphere");
-
-    am.Load("106");
-    Model snowman = rh.GetModel("106", "snowman");
+    am.Load("cube");
+    Model background = rh.GetModel("cube", "background");
+    am.Load("sphere");
+    Model sphere = rh.GetModel("sphere", "sphere");
+    am.Load("snowman");
+    Model snowman = rh.GetModel("snowman", "snowman");
+    am.Load("snowpile");
+    Model snowpile = rh.GetModel("snowpile", "snowpile");
+    am.Load("snowflat");
+    Model snowflat = rh.GetModel("snowflat", "snowflat");
+    am.Load("tree");
+    Model tree1 = rh.GetModel("tree", "tree1");
+    am.Load("treeA");
+    Model tree2 = rh.GetModel("treeA", "tree2");
+    am.Load("treeB");
+    Model tree3 = rh.GetModel("treeB", "tree3");
 
     //progressive stuff
     std::string LODName;
@@ -223,9 +232,14 @@ int main()
         }
     };
 
-    RequestTextureFor("sphere", sphere, "003");
-    RequestTextureFor("snowman", snowman, "107");
-
+    RequestTextureFor("sphere", sphere, "sphere");
+    RequestTextureFor("snowman", snowman, "snowman");
+    RequestTextureFor("snowpile", snowpile, "snowpile");
+    RequestTextureFor("snowflat", snowflat, "snowflat");
+    RequestTextureFor("tree1", tree1, "tree");
+    RequestTextureFor("tree2", tree2, "treeA");
+    RequestTextureFor("tree3", tree3, "treeB");
+    
     while (!WindowShouldClose())
     {
         float dt = GetFrameTime();
@@ -264,8 +278,8 @@ int main()
         ClearBackground(RAYWHITE);
 
         BeginMode3D(camera);
-        UpdateCamera(&camera, CAMERA_FREE);
-        SetMousePosition(width / 2, height / 2);
+        UpdateCamera(&camera, CAMERA_FIRST_PERSON);
+        //SetMousePosition(width / 2, height / 2);
 
         if (IsKeyPressed(KEY_ONE))
         {
@@ -334,6 +348,11 @@ int main()
         DrawModel(background, { 0, 30, 0 }, 20.0f, DARKBLUE);
 
         DrawModel(snowman, { 0,-2, 0 }, 1.0f, WHITE);
+        DrawModel(snowpile, { 0,-2, 0 }, 1.0f, WHITE);
+        DrawModel(snowflat, { 3,-2, 0 }, 1.0f, WHITE);
+        DrawModel(tree1, { -2,-2, 5 }, 1.0f, WHITE);
+        DrawModel(tree2, { 0,-2, 5 }, 1.0f, WHITE);
+        DrawModel(tree3, { 0,-2, 5 }, 1.0f, WHITE);
 
         //RENDER PROJECTILES
         projectileRenderer.RenderProjectiles(projectileManager);
