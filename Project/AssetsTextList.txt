@@ -10,7 +10,6 @@
 103,Assets/tree.obj,Mesh
 104,Assets/table.obj,Mesh
 105,Assets/figures.obj,Mesh
-106,Assets/snowman.obj,Mesh
 200,Assets/Noise.png,TexturePng
 201,Assets/Noise.png,TexturePng
 202,Assets/Noise.png,TexturePng
@@ -31,3 +30,4 @@
 217,Assets/Noise.png,TexturePng
 218,Assets/Noise.png,TexturePng
 219,Assets/Noise.png,TexturePng
+

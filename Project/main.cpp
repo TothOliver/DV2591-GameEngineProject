@@ -174,8 +174,6 @@ int main()
     Model table = rh.GetModel("104", "table");
     am.Load("105");
     Model figures = rh.GetModel("105", "figures");
-    am.Load("106");
-    Model snowman = rh.GetModel("106", "snowman");
 
     //progressive stuff
     std::string LODName;
@@ -372,7 +370,6 @@ int main()
         DrawModel(table, { -10, -1, -15 }, 0.02f, DARKBROWN);
         DrawModel(figures, { 15, -2, 15 }, 0.15f, RED);
 
-        DrawModel(snowman, { 0, 0, 0 }, 1.0f, BLUE);
             
 
         //RENDER PROJECTILES
