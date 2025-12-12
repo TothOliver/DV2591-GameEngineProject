@@ -135,7 +135,7 @@ int main()
 {
     //packaging tool
     PackagingTool packagingTool;
-    packagingTool.buildPackage("AssetsTextList.txt", "Assets.bundle");
+    packagingTool.buildPackage("AssetsListNew.txt", "Assets.bundle");
 
     //Asset manager
     AssetManager am(64 * 1024 * 1024, "Assets.bundle");
@@ -155,25 +155,10 @@ int main()
     
     //Dynamic model using GUID (Texture isnt set here, it is set when fully loaded)
     am.Load("101");
-    Model dynamicModel = rh.GetModel("101", "dynamicModel");
     Model background = rh.GetModel("101", "background");
-    Model box1 = rh.GetModel("101", "box1");
-    Model box2 = rh.GetModel("101", "box2");
-    Model box3 = rh.GetModel("101", "box3");
-    Model box4 = rh.GetModel("101", "box4");
-    Model box5 = rh.GetModel("101", "box5");
-    Model bigBox = rh.GetModel("101", "bigBox");
 
     am.Load("102");
     Model sphere = rh.GetModel("102", "sphere");
-
-    //Fun models :)
-    am.Load("103");
-    Model tree = rh.GetModel("103", "tree");
-    am.Load("104");
-    Model table = rh.GetModel("104", "table");
-    am.Load("105");
-    Model figures = rh.GetModel("105", "figures");
 
     am.Load("106");
     Model snowman = rh.GetModel("106", "snowman");
@@ -238,11 +223,6 @@ int main()
         }
     };
 
-    RequestTextureFor("box1", box1, "001");
-    RequestTextureFor("box2", box2, "002");
-    RequestTextureFor("box3", box3, "003");
-    RequestTextureFor("box4", box4, "003");
-    RequestTextureFor("box5", box5, "003");
     RequestTextureFor("sphere", sphere, "003");
     RequestTextureFor("snowman", snowman, "107");
 
@@ -289,11 +269,7 @@ int main()
 
         if (IsKeyPressed(KEY_ONE))
         {
-            RequestTextureFor("box1", box1, "001");
-            RequestTextureFor("box2", box2, "002");
-            RequestTextureFor("box3", box3, "003");
-            RequestTextureFor("box4", box4, "003");
-            RequestTextureFor("box5", box5, "003");
+
             RequestTextureFor("sphere", sphere, "003");
         }
 
@@ -357,24 +333,7 @@ int main()
         DrawModel(background, { 0, 0, -40 }, 20.0f, LIGHTGRAY);
         DrawModel(background, { 0, 30, 0 }, 20.0f, DARKBLUE);
 
-        //small boxes
-        DrawModel(dynamicModel, { -3, 3, -3 }, 1.0f, DARKGRAY);
-        DrawModel(box1, { 0, 3, -3 }, 1.0f, WHITE);
-        DrawModel(box2, { 3, 3, -3 }, 1.0f, WHITE);
-        DrawModel(box3, { -3, 0, -3 }, 1.0f, WHITE);
-        DrawModel(box4, { 0, 0, -3 }, 1.0f, WHITE);
-        DrawModel(box5, { 3, 0, -3 }, 1.0f, WHITE);
-
-        //Progressive
-        DrawModel(bigBox, { -12, 1, -6 }, 2.0f, WHITE);
-
-        //test
-        DrawModel(sphere, { 10, 1, -3 }, 2.0f, WHITE);
-        DrawModel(tree, { 10, -2, -10 }, 0.5f, LIME);
-        DrawModel(table, { -10, -1, -15 }, 0.02f, DARKBROWN);
-        DrawModel(figures, { 15, -2, 15 }, 0.15f, RED);
-
-        DrawModel(snowman, { 0, 0, 0 }, 1.0f, WHITE);
+        DrawModel(snowman, { 0,-2, 0 }, 1.0f, WHITE);
 
         //RENDER PROJECTILES
         projectileRenderer.RenderProjectiles(projectileManager);
