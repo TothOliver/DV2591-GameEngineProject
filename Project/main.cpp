@@ -2,13 +2,15 @@
 #include "RaylibHelper.hpp"
 #include "ProjectileManager.hpp"
 #include "ProjectileRenderer.hpp"
-#include "raymath.h"
-#include "raylib.h"
 #include "MemoryManager/StackAllocator.hpp"
 #include "ExplosionSystem.hpp"
+#include "raymath.h"
+#include "raylib.h"
 #include <iostream>
 #include <string>
 #include <memory>
+#include <unordered_map>
+#include <unordered_set>
 
 struct MemoryDebugInfo 
 {
@@ -24,6 +26,13 @@ struct AssetDebugInfo
     size_t loadedResourceCount = 0;
     size_t asyncJobsInFlight = 0;
     size_t totalEvictions = 0;
+};
+
+struct PendingTextureSet
+{
+    std::string guid;
+    Model* model = nullptr;
+    bool applied = false;
 };
 
 void SetTexture(Model& model, Texture2D& texture)
@@ -136,15 +145,6 @@ int main()
     ExplosionSystem explosionSystem(frameAllocator);
     MemoryDebugInfo g_memoryDebug;
 
-    //Start loading some stuff
-    am.LoadAsync("001");
-    am.LoadAsync("002");
-    am.LoadAsync("003");
-    am.LoadAsync("005");
-    am.LoadAsync("004_lod0");
-    am.LoadAsync("004_lod1");
-    am.LoadAsync("004_lod2");
-
     int width = 1280;
     int height = 720;
     InitWindow(width, height, "Tony Rickardsson");
@@ -174,6 +174,8 @@ int main()
     Model table = rh.GetModel("104", "table");
     am.Load("105");
     Model figures = rh.GetModel("105", "figures");
+    am.Load("106");
+    Model snowman = rh.GetModel("106", "snowman");
 
     //progressive stuff
     std::string LODName;
@@ -199,12 +201,56 @@ int main()
 
     float shootCooldown = 0.0f;
 
+    std::unordered_map<std::string, PendingTextureSet> pendingByName;
+    std::unordered_set<std::string> pendingGuids;
+
+    auto RequestTextureFor = [&](const std::string& name, Model& model, const std::string& guid)
+    {
+        pendingByName[name] = PendingTextureSet{ guid, &model, false };
+        am.LoadAsync(guid);
+        pendingGuids.insert(guid);
+    };
+
+    auto ResolvePendingTextures = [&]()
+    {
+        for (auto it = pendingGuids.begin(); it != pendingGuids.end(); )
+        {
+            const std::string& guid = *it;
+
+            if (am.TryGet(guid) == nullptr)
+            {
+                ++it;
+                continue;
+            }
+
+            for (auto& [name, pending] : pendingByName)
+            {
+                if (!pending.applied && pending.guid == guid && pending.model)
+                {
+                    Texture2D tex = rh.GetTexture(guid);
+                    SetTexture(*pending.model, tex);
+                    pending.applied = true;
+                }
+            }
+
+            it = pendingGuids.erase(it);
+        }
+    };
+
+    RequestTextureFor("box1", box1, "001");
+    RequestTextureFor("box2", box2, "002");
+    RequestTextureFor("box3", box3, "003");
+    RequestTextureFor("box4", box4, "003");
+    RequestTextureFor("box5", box5, "003");
+    RequestTextureFor("sphere", sphere, "003");
+
     while (!WindowShouldClose())
     {
         float dt = GetFrameTime();
 
         shootCooldown -= dt;
 
+        ResolvePendingTextures();
         frameAllocator.Reset();
         explosionSystem.Update(dt);
 
@@ -241,23 +287,12 @@ int main()
 
         if (IsKeyPressed(KEY_ONE))
         {
-            Texture2D toe = rh.GetTexture("001");
-            SetTexture(box1, toe);
-        }
-
-        if (IsKeyPressed(KEY_TWO))
-        {
-            Texture2D hatley = rh.GetTexture("002");
-            SetTexture(box2, hatley);
-        }
-
-        if (IsKeyPressed(KEY_THREE))
-        {
-            Texture2D noise = rh.GetTexture("003");
-            SetTexture(box3, noise);
-            SetTexture(box4, noise);
-            SetTexture(box5, noise);
-            SetTexture(sphere, noise);
+            RequestTextureFor("box1", box1, "001");
+            RequestTextureFor("box2", box2, "002");
+            RequestTextureFor("box3", box3, "003");
+            RequestTextureFor("box4", box4, "003");
+            RequestTextureFor("box5", box5, "003");
+            RequestTextureFor("sphere", sphere, "003");
         }
 
         if (IsKeyPressed(KEY_FIVE))
@@ -336,6 +371,8 @@ int main()
         DrawModel(tree, { 10, -2, -10 }, 0.5f, LIME);
         DrawModel(table, { -10, -1, -15 }, 0.02f, DARKBROWN);
         DrawModel(figures, { 15, -2, 15 }, 0.15f, RED);
+
+        DrawModel(snowman, { 0, 0, 0 }, 1.0f, BLUE);
             
 
         //RENDER PROJECTILES
@@ -370,6 +407,7 @@ int main()
 
         EndDrawing();
     }
+    
     projectileManager.Shutdown();
     CloseWindow();
     return 0;
