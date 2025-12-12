@@ -10,6 +10,8 @@
 103,Assets/tree.obj,Mesh
 104,Assets/table.obj,Mesh
 105,Assets/figures.obj,Mesh
+106,Assets/snowman-hat.obj,Mesh
+107,Assets/colormap.png,TexturePng
 200,Assets/Noise.png,TexturePng
 201,Assets/Noise.png,TexturePng
 202,Assets/Noise.png,TexturePng

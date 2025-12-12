@@ -1,0 +1,5 @@
+101,Assets/cube.obj,Mesh
+102,Assets/sphere.obj,Mesh
+106,Assets/snowman-hat.obj,Mesh
+107,Assets/colormap.png,TexturePng
+
