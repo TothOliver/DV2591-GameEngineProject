@@ -1,0 +1,56 @@
+# Cube with Texture Coordinates, Normals, and Corrected UV Coordinates
+
+v -1 -1 -1
+v 1 -1 -1
+v 1 1 -1
+v -1 1 -1
+v -1 -1 1
+v 1 -1 1
+v 1 1 1
+v -1 1 1
+
+vn 0 0 -1
+vn 0 0 1
+vn 0 -1 0
+vn 1 0 0
+vn 0 1 0
+vn -1 0 0
+
+vt 0 0
+vt 1 0
+vt 1 1
+vt 0 1
+
+usemtl test1
+
+#Front
+f 1/1/1 3/3/1 2/2/1
+f 1/1/1 4/4/1 3/3/1
+
+#Back
+f 5/1/2 7/3/2 8/2/2
+f 5/1/2 6/4/2 7/3/2
+
+usemtl test2
+
+#Bottom
+f 1/1/3 2/2/3 6/3/3
+f 1/1/3 6/3/3 5/4/3
+
+usemtl test3
+
+#Right
+f 2/4/4 3/1/4 7/2/4
+f 2/4/4 7/2/4 6/3/4
+
+usemtl test2
+
+#Top
+f 3/1/5 4/4/5 8/3/5
+f 3/1/5 8/3/5 7/2/5
+
+usemtl test3
+
+#Left
+f 5/1/6 8/2/6 4/3/6
+f 5/1/6 4/3/6 1/4/6
