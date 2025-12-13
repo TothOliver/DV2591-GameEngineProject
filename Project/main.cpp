@@ -38,7 +38,7 @@ struct PendingTextureSet
 struct PendingModelSet
 {
     std::string guid;
-    std::string name;   // cache key used by RaylibHelper
+    std::string name;
     Model* outModel = nullptr;
     bool applied = false;
 };
@@ -176,6 +176,9 @@ int main()
     Model tree1 = rh.GetModel("tree", "tree1");
     Model tree2 = rh.GetModel("treeA", "tree2");
     Model tree3 = rh.GetModel("treeB", "tree3");
+    bool isLoaded1 = false;
+    bool isLoaded2 = false;
+    bool isLoaded3 = false;
 
     //progressive stuff
     std::string LODName;
@@ -244,10 +247,7 @@ int main()
         pendingModelsByName[name] = PendingModelSet{ guid, name, &model, false };
         am.LoadAsync(guid);
         pendingModelGuids.insert(guid);
-
-        // Important: initialize with placeholder so you can draw immediately
-        model = rh.GetModel(guid, name); // may return base model if not ready
-        // BUT: this increments refCount once, which is fine because it's a real acquire.
+        model = rh.GetModel(guid, name);
     };
 
     auto ResolvePendingModels = [&]()
@@ -258,7 +258,6 @@ int main()
 
             if (am.TryGet(guid) == nullptr) { ++it; continue; } // not ready
 
-            // Apply to all pending entries using this guid
             for (auto& [name, pending] : pendingModelsByName)
             {
                 if (!pending.applied && pending.guid == guid && pending.outModel)
@@ -331,7 +330,21 @@ int main()
 
         if (IsKeyPressed(KEY_ONE))
         {
-            RequestTextureFor("sphere", sphere, "003");
+            RequestModelFor("tree1", tree1, "tree");
+            RequestTextureFor("tree1", tree1, "colormap");
+            isLoaded1 = true;
+        }
+        if (IsKeyPressed(KEY_TWO))
+        {
+            RequestModelFor("tree2", tree2, "treeA");
+            RequestTextureFor("tree2", tree2, "colormap");
+            isLoaded2 = true;
+        }
+        if (IsKeyPressed(KEY_THREE))
+        {
+            RequestModelFor("tree3", tree3, "treeB");
+            RequestTextureFor("tree3", tree3, "colormap");
+            isLoaded3 = true;
         }
 
         if (IsKeyPressed(KEY_FIVE))
@@ -344,10 +357,11 @@ int main()
 
         if (IsKeyPressed(KEY_X))
         {
-            rh.ForceUnloadTexture("001");
-            rh.ForceUnloadTexture("002");
-            rh.ForceUnloadTexture("003");
-            rh.ForceUnloadTexture("004_lod0");
+            rh.ReleaseModel("tree1");
+            rh.ReleaseTexture("tree1");
+            isLoaded1 = false;
+            isLoaded2 = false;
+            isLoaded3 = false;
         }
 
         //PROJECTILES
@@ -397,9 +411,14 @@ int main()
         DrawModel(snowman, { 0,-2, 0 }, 1.0f, WHITE);
         DrawModel(snowpile, { 1, -2, 0 }, 1.0f, WHITE);
         DrawModel(snowflat, { 0,-2, 0 }, 1.0f, WHITE);
-        DrawModel(tree1, { -2,-2, 5 }, 1.0f, WHITE);
-        DrawModel(tree2, { 0,-2, 5 }, 1.0f, WHITE);
-        DrawModel(tree3, { 2,-2, 5 }, 1.0f, WHITE);
+
+        if(isLoaded1)
+            DrawModel(tree1, { -2,-2, 5 }, 1.0f, WHITE);
+        if (isLoaded2)
+            DrawModel(tree2, { 0,-2, 5 }, 1.0f, WHITE);
+        if (isLoaded3)
+            DrawModel(tree3, { 2,-2, 5 }, 1.0f, WHITE);
+
 
         //RENDER PROJECTILES
         projectileRenderer.RenderProjectiles(projectileManager);

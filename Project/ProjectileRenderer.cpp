@@ -69,7 +69,9 @@ void ProjectileRenderer::CleanupUnusedAssets()
         {
             m_raylibHelper->ReleaseModel(it->second.modelName);
             const size_t sep = it->first.find('_');
+
             const std::string textureGuid = (sep == std::string::npos) ? it->first : it->first.substr(sep + 1);
+
             m_raylibHelper->ReleaseTexture(textureGuid);
 
             it = m_projectileAssets.erase(it);
