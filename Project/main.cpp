@@ -463,9 +463,9 @@ int main()
         DrawText("Controls:", 30, 30, 30, BLACK);
         DrawText("1-3 -> Load Assets", 30, 60, 30, BLACK);
         DrawText("4 -> Load Texture", 30, 90, 30, BLACK);
-        DrawText("X -> Unload Assets", 30, 120, 30, BLACK);
-        DrawText("5 -> Stress Test", 30, 150, 30, BLACK);
-        DrawText("0 -> Stack Test", 30, 180, 30, BLACK);
+        DrawText("5 -> Stress Test", 30, 120, 30, BLACK);
+        DrawText("0 -> Stack Test", 30, 150, 30, BLACK);
+        DrawText("X -> Unload Assets", 30, 180, 30, BLACK);
 
         DrawStackAllocatorOverlay(g_memoryDebug);
         DrawAssetManagerOverlay(g_assetsDebug);
