@@ -50,6 +50,7 @@ Model RaylibHelper::GetModel(std::string GUID, std::string name)
             return m_baseModel;
         }
         auto mesh = std::dynamic_pointer_cast<MeshObj>(res);
+        entry.guid = GUID;
         entry.model = ConvertAttribToModel(mesh->GetAttrib(), mesh->GetShapes());
     }
 
@@ -84,8 +85,9 @@ void RaylibHelper::ReleaseModel(std::string name)
     if (--it->second.refCount == 0)
     {
         UnloadModel(it->second.model);
+        m_assetManager->Unload(it->second.guid); //maybe (yes)
         m_models.erase(it);
-        //m_assetManager->Unload(GUID); //maybe
+
     }
 }
 
@@ -111,8 +113,9 @@ void RaylibHelper::ForceUnloadModel(std::string name)
     }
 
     UnloadModel(it->second.model);
+    m_assetManager->Unload(it->second.guid); //maybe (yes)
     m_models.erase(it);
-    //m_assetManager->Unload(GUID); //maybe
+
 }
 
 void RaylibHelper::CleanUp()

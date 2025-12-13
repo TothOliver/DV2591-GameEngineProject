@@ -35,8 +35,19 @@ struct PendingTextureSet
     bool applied = false;
 };
 
+struct PendingModelSet
+{
+    std::string guid;
+    std::string name;   // cache key used by RaylibHelper
+    Model* outModel = nullptr;
+    bool applied = false;
+};
+
 void SetTexture(Model& model, Texture2D& texture)
 {
+    if (model.materials == nullptr || model.materialCount <= 0)
+        return;
+
     model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
 }
 
@@ -192,6 +203,8 @@ int main()
 
     std::unordered_map<std::string, PendingTextureSet> pendingByName;
     std::unordered_set<std::string> pendingGuids;
+    std::unordered_map<std::string, PendingModelSet> pendingModelsByName;
+    std::unordered_set<std::string> pendingModelGuids;
 
     auto RequestTextureFor = [&](const std::string& name, Model& model, const std::string& guid)
     {
@@ -226,7 +239,46 @@ int main()
         }
     };
 
-    RequestTextureFor("sphere", sphere, "colormap");
+    auto RequestModelFor = [&](const std::string& name, Model& model, const std::string& guid)
+    {
+        pendingModelsByName[name] = PendingModelSet{ guid, name, &model, false };
+        am.LoadAsync(guid);
+        pendingModelGuids.insert(guid);
+
+        // Important: initialize with placeholder so you can draw immediately
+        model = rh.GetModel(guid, name); // may return base model if not ready
+        // BUT: this increments refCount once, which is fine because it's a real acquire.
+    };
+
+    auto ResolvePendingModels = [&]()
+    {
+        for (auto it = pendingModelGuids.begin(); it != pendingModelGuids.end(); )
+        {
+            const std::string& guid = *it;
+
+            if (am.TryGet(guid) == nullptr) { ++it; continue; } // not ready
+
+            // Apply to all pending entries using this guid
+            for (auto& [name, pending] : pendingModelsByName)
+            {
+                if (!pending.applied && pending.guid == guid && pending.outModel)
+                {
+                    *pending.outModel = rh.GetModel(pending.guid, pending.name);
+                    pending.applied = true;
+                }
+            }
+
+            it = pendingModelGuids.erase(it);
+        }
+    };
+
+    RequestModelFor("snowman", snowman, "snowman");
+    RequestModelFor("snowpile", snowpile, "snowpile");
+    RequestModelFor("snowflat", snowflat, "snowflat");
+    RequestModelFor("tree1", tree1, "tree");
+    RequestModelFor("tree2", tree2, "treeA");
+    RequestModelFor("tree3", tree3, "treeB");
+
     RequestTextureFor("snowman", snowman, "colormap");
     RequestTextureFor("snowpile", snowpile, "colormap");
     RequestTextureFor("snowflat", snowflat, "colormap");
@@ -240,7 +292,9 @@ int main()
 
         shootCooldown -= dt;
 
+        ResolvePendingModels();
         ResolvePendingTextures();
+
         frameAllocator.Reset();
         explosionSystem.Update(dt);
 

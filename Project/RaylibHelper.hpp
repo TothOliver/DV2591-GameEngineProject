@@ -19,6 +19,7 @@ struct TextureEntry
 struct ModelEntry
 {
 	Model model;
+	std::string guid;
 	int refCount = 0;
 };
 
