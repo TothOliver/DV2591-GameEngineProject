@@ -158,7 +158,7 @@ int main()
 
     int width = 1280;
     int height = 720;
-    InitWindow(width, height, "Tony Rickardsson");
+    InitWindow(width, height, "Game Engine");
     SetTargetFPS(60);
     DisableCursor();
 
@@ -310,7 +310,7 @@ int main()
         explosionSystem.Update(dt);
 
 
-        if (IsKeyPressed(KEY_T))
+        if (IsKeyPressed(KEY_ZERO))
         {
             for (int i = 0; i < 3; ++i)
             {
@@ -457,15 +457,15 @@ int main()
         EndMode3D();
 
         //2D
-        DrawRectangle(20, 20, 330, 170, Fade(SKYBLUE, 0.5f));
-        DrawRectangleLines(20, 20, 330, 170, BLUE);
+        DrawRectangle(20, 20, 330, 200, Fade(SKYBLUE, 0.5f));
+        DrawRectangleLines(20, 20, 330, 200, BLUE);
 
         DrawText("Controls:", 30, 30, 30, BLACK);
-        DrawText("1-3 -> Load textures", 30, 60, 30, BLACK);
-        DrawText("4 -> Multiresolution", 30, 90, 30, BLACK);
-        DrawText("5 -> Load much", 30, 120, 30, BLACK);
-        DrawText("x -> Clean all", 30, 150, 30, BLACK);
-        DrawText("T -> EXPLOSION", 30, 180, 30, BLACK);
+        DrawText("1-3 -> Load Assets", 30, 60, 30, BLACK);
+        DrawText("4 -> Load Texture", 30, 90, 30, BLACK);
+        DrawText("X -> Unload Assets", 30, 120, 30, BLACK);
+        DrawText("5 -> Stress Test", 30, 150, 30, BLACK);
+        DrawText("0 -> Stack Test", 30, 180, 30, BLACK);
 
         DrawStackAllocatorOverlay(g_memoryDebug);
         DrawAssetManagerOverlay(g_assetsDebug);
