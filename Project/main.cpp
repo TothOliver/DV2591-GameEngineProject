@@ -159,17 +159,11 @@ int main()
     Model background = rh.GetModel("cube", "background");
     am.Load("sphere");
     Model sphere = rh.GetModel("sphere", "sphere");
-    am.Load("snowman");
     Model snowman = rh.GetModel("snowman", "snowman");
-    am.Load("snowpile");
     Model snowpile = rh.GetModel("snowpile", "snowpile");
-    am.Load("snowflat");
     Model snowflat = rh.GetModel("snowflat", "snowflat");
-    am.Load("tree");
     Model tree1 = rh.GetModel("tree", "tree1");
-    am.Load("treeA");
     Model tree2 = rh.GetModel("treeA", "tree2");
-    am.Load("treeB");
     Model tree3 = rh.GetModel("treeB", "tree3");
 
     //progressive stuff
@@ -191,8 +185,8 @@ int main()
 
     ProjectileRenderer projectileRenderer(rh);
 
-    std::string currentProjectileMesh = "102";
-    std::string currentProjectileTexture = "003";
+    std::string currentProjectileMesh = "sphere";
+    std::string currentProjectileTexture = "001";
 
     float shootCooldown = 0.0f;
 
@@ -232,13 +226,13 @@ int main()
         }
     };
 
-    RequestTextureFor("sphere", sphere, "sphere");
-    RequestTextureFor("snowman", snowman, "snowman");
-    RequestTextureFor("snowpile", snowpile, "snowpile");
-    RequestTextureFor("snowflat", snowflat, "snowflat");
-    RequestTextureFor("tree1", tree1, "tree");
-    RequestTextureFor("tree2", tree2, "treeA");
-    RequestTextureFor("tree3", tree3, "treeB");
+    RequestTextureFor("sphere", sphere, "colormap");
+    RequestTextureFor("snowman", snowman, "colormap");
+    RequestTextureFor("snowpile", snowpile, "colormap");
+    RequestTextureFor("snowflat", snowflat, "colormap");
+    RequestTextureFor("tree1", tree1, "colormap");
+    RequestTextureFor("tree2", tree2, "colormap");
+    RequestTextureFor("tree3", tree3, "colormap");
     
     while (!WindowShouldClose())
     {
@@ -278,12 +272,11 @@ int main()
         ClearBackground(RAYWHITE);
 
         BeginMode3D(camera);
-        UpdateCamera(&camera, CAMERA_FIRST_PERSON);
-        //SetMousePosition(width / 2, height / 2);
+        UpdateCamera(&camera, CAMERA_FREE);
+        SetMousePosition(width / 2, height / 2);
 
         if (IsKeyPressed(KEY_ONE))
         {
-
             RequestTextureFor("sphere", sphere, "003");
         }
 
@@ -325,7 +318,7 @@ int main()
         // Change projectile type with number keys
         if (IsKeyPressed(KEY_SIX))
         {
-            currentProjectileTexture = "001";
+            currentProjectileTexture = "sphere";
         }
         if (IsKeyPressed(KEY_SEVEN))
         {
@@ -348,11 +341,11 @@ int main()
         DrawModel(background, { 0, 30, 0 }, 20.0f, DARKBLUE);
 
         DrawModel(snowman, { 0,-2, 0 }, 1.0f, WHITE);
-        DrawModel(snowpile, { 0,-2, 0 }, 1.0f, WHITE);
-        DrawModel(snowflat, { 3,-2, 0 }, 1.0f, WHITE);
+        DrawModel(snowpile, { 1, -2, 0 }, 1.0f, WHITE);
+        DrawModel(snowflat, { 0,-2, 0 }, 1.0f, WHITE);
         DrawModel(tree1, { -2,-2, 5 }, 1.0f, WHITE);
         DrawModel(tree2, { 0,-2, 5 }, 1.0f, WHITE);
-        DrawModel(tree3, { 0,-2, 5 }, 1.0f, WHITE);
+        DrawModel(tree3, { 2,-2, 5 }, 1.0f, WHITE);
 
         //RENDER PROJECTILES
         projectileRenderer.RenderProjectiles(projectileManager);
