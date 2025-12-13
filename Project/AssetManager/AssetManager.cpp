@@ -141,10 +141,13 @@ void AssetManager::DumpLoadedResources() const
 
 void AssetManager::GetDebugInfo(AssetManagerDebugInfo& outinfo) const
 {
-    outinfo.memoryLimit = m_memoryLimit;
-    outinfo.memoryUsed = m_memoryUsed;
-    outinfo.loadedResourceCount = m_loaded.size();
-    outinfo.totalEvictions = m_totalEvictions;
+    {
+        std::scoped_lock lock(m_loadedMutex);
+        outinfo.memoryLimit = m_memoryLimit;
+        outinfo.memoryUsed = m_memoryUsed;
+        outinfo.loadedResourceCount = m_loaded.size();
+        outinfo.totalEvictions = m_totalEvictions;
+    }
 
     {
         std::scoped_lock lock(m_jobQueueMutex);
@@ -152,6 +155,7 @@ void AssetManager::GetDebugInfo(AssetManagerDebugInfo& outinfo) const
         outinfo.asyncActiveJobs = m_inAction.size();
     }
 }
+
 
 std::vector<uint8_t> AssetManager::ReadFromPackage(const PackageEntry& entry)
 {

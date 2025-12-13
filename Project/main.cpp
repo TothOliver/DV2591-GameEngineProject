@@ -204,6 +204,24 @@ int main()
 
     float shootCooldown = 0.0f;
 
+    //STRESS loader
+    static bool stressOn = false;
+    static float stressTimer = 0.0f;
+    static int stressLoadsPerTick = 20;
+    static float stressTickRate = 0.10f;
+
+    static int guidMin = 100;
+    static int guidMax = 200;
+    static int guidCursor = guidMin;
+
+    auto NextGuid = [&]()
+    {
+        std::string g = std::to_string(guidCursor++);
+        if (guidCursor > guidMax) guidCursor = guidMin;
+        return g;
+    };
+
+
     std::unordered_map<std::string, PendingTextureSet> pendingByName;
     std::unordered_set<std::string> pendingGuids;
     std::unordered_map<std::string, PendingModelSet> pendingModelsByName;
@@ -345,14 +363,6 @@ int main()
             RequestTextureFor("snowman", snowman, "colormap");
         }
 
-        if (IsKeyPressed(KEY_FIVE))
-        {
-            for (int i = 200; i < 220; i++)
-            {
-                am.LoadAsync(std::to_string(i));
-            }
-        }
-
         if (IsKeyPressed(KEY_X))
         {
             rh.ReleaseModel("tree");
@@ -363,7 +373,33 @@ int main()
             rh.ReleaseTexture("colormap");
             rh.ReleaseTexture("colormap");
             isLoaded1 = isLoaded2 = isLoaded3 = false;
+            
+            //for (int i = 100; i < 200; i++) {
+            //    std::string id = i;
+            //    rh.ReleaseTexture(id);
+            //}
+
+
         }
+
+        if (IsKeyPressed(KEY_FIVE))
+        {
+            stressOn = !stressOn;
+        }
+        if (stressOn)
+        {
+            stressTimer += dt;
+            if (stressTimer >= stressTickRate)
+            {
+                stressTimer = 0.0f;
+
+                for (int i = 0; i < stressLoadsPerTick; ++i)
+                {
+                    am.LoadAsync(NextGuid());
+                }
+            }
+        }
+
 
         //PROJECTILES
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && shootCooldown <= 0.0f)
