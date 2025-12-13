@@ -247,7 +247,6 @@ int main()
         pendingModelsByName[name] = PendingModelSet{ guid, name, &model, false };
         am.LoadAsync(guid);
         pendingModelGuids.insert(guid);
-        model = rh.GetModel(guid, name);
     };
 
     auto ResolvePendingModels = [&]()
@@ -279,11 +278,6 @@ int main()
     RequestModelFor("tree3", tree3, "treeB");
 
     RequestTextureFor("snowman", snowman, "colormap");
-    RequestTextureFor("snowpile", snowpile, "colormap");
-    RequestTextureFor("snowflat", snowflat, "colormap");
-    RequestTextureFor("tree1", tree1, "colormap");
-    RequestTextureFor("tree2", tree2, "colormap");
-    RequestTextureFor("tree3", tree3, "colormap");
     
     while (!WindowShouldClose())
     {
@@ -346,6 +340,10 @@ int main()
             RequestTextureFor("tree3", tree3, "colormap");
             isLoaded3 = true;
         }
+        if (IsKeyPressed(KEY_FOUR))
+        {
+            RequestTextureFor("snowman", snowman, "colormap");
+        }
 
         if (IsKeyPressed(KEY_FIVE))
         {
@@ -357,11 +355,14 @@ int main()
 
         if (IsKeyPressed(KEY_X))
         {
-            rh.ReleaseModel("tree1");
-            rh.ReleaseTexture("tree1");
-            isLoaded1 = false;
-            isLoaded2 = false;
-            isLoaded3 = false;
+            rh.ReleaseModel("tree");
+            rh.ReleaseModel("treeA");
+            rh.ReleaseModel("treeB");
+            rh.ReleaseTexture("colormap");
+            rh.ReleaseTexture("colormap");
+            rh.ReleaseTexture("colormap");
+            rh.ReleaseTexture("colormap");
+            isLoaded1 = isLoaded2 = isLoaded3 = false;
         }
 
         //PROJECTILES
