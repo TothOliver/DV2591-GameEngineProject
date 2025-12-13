@@ -149,7 +149,7 @@ int main()
     packagingTool.buildPackage("AssetsListNew.txt", "Assets.bundle");
 
     //Asset manager
-    AssetManager am(64 * 1024 * 1024, "Assets.bundle");
+    AssetManager am(32 * 1024 * 1024, "Assets.bundle");
     AssetDebugInfo g_assetsDebug;
 
     StackAllocator frameAllocator(64 * 1024);  
@@ -374,32 +374,15 @@ int main()
             rh.ReleaseTexture("colormap");
             isLoaded1 = isLoaded2 = isLoaded3 = false;
             
-            //for (int i = 100; i < 200; i++) {
-            //    std::string id = i;
-            //    rh.ReleaseTexture(id);
-            //}
-
-
+            for (int i = 100; i < 200; ++i)
+                am.Unload(std::to_string(i));
         }
 
         if (IsKeyPressed(KEY_FIVE))
         {
-            stressOn = !stressOn;
+            for (int i = 0; i < stressLoadsPerTick; ++i)
+                am.LoadAsync(NextGuid());
         }
-        if (stressOn)
-        {
-            stressTimer += dt;
-            if (stressTimer >= stressTickRate)
-            {
-                stressTimer = 0.0f;
-
-                for (int i = 0; i < stressLoadsPerTick; ++i)
-                {
-                    am.LoadAsync(NextGuid());
-                }
-            }
-        }
-
 
         //PROJECTILES
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && shootCooldown <= 0.0f)

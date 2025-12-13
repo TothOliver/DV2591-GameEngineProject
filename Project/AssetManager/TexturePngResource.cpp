@@ -38,6 +38,7 @@ bool TexturePng::Load(const std::vector<uint8_t>& data)
 	m_width = img.width;
 	m_height = img.height;
 	m_channels = 4;
+	m_size = (size_t)imgSize;
 
 	UnloadImage(img);
 

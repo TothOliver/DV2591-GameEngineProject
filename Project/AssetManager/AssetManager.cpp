@@ -327,7 +327,8 @@ void AssetManager::WorkerLoop()
             EraseJob(job.guid);
             continue;
         }
-
+        
+        std::this_thread::sleep_for(std::chrono::milliseconds(10)); //Just for visual see that something happens in debug
         {
             std::scoped_lock lock(m_loadedMutex);
             EvictIfNeeded(resource->GetSize());

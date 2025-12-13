@@ -91,6 +91,7 @@ void RaylibHelper::ReleaseModel(std::string name)
     }
 }
 
+
 void RaylibHelper::ForceUnloadTexture(std::string GUID)
 {
     auto it = m_textures.find(GUID);
@@ -135,6 +136,7 @@ void RaylibHelper::CleanUp()
 	m_models.clear();
 	m_textures.clear();
 }
+
 
 Texture2D RaylibHelper::GenerateTexture(std::shared_ptr<IResource>& baseRes)
 {
