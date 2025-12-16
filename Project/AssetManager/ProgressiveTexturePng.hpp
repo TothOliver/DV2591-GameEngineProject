@@ -52,7 +52,6 @@ private:
     int m_pendingH = 0;
     int m_pendingC = 0;
 
-    // NEW: LOD tracking
-    int m_currentLOD = 0;  // 0 = lowest res, higher = better quality
-    int m_maxLOD = 2;      // Maximum available LOD
+    int m_currentLOD = 0;
+    int m_maxLOD = 2;
 };

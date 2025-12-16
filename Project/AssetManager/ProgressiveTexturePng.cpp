@@ -5,8 +5,6 @@ std::string ProgressiveTexturePng::GetNextLODGuid() const
 {
     if (!HasHigherLOD()) return "";
 
-    // Extract base GUID and append next LOD level
-    // Assumes format: "001_lod0", "001_lod1", etc.
     std::string baseGuid = m_guid;
     size_t lodPos = baseGuid.find("_lod");
     if (lodPos != std::string::npos) {
@@ -23,19 +21,19 @@ bool ProgressiveTexturePng::Load(const std::vector<uint8_t>& data)
     if (!img.data) return false;
 
     size_t imgSize = img.width * img.height * 4;
-    m_imageData = (unsigned char*)malloc(imgSize); // take ownership safely
+    m_imageData = (unsigned char*)malloc(imgSize);
     memcpy(m_imageData, img.data, imgSize);
 
     m_width = img.width;
     m_height = img.height;
     m_channels = 4;
 
-    UnloadImage(img); // now safe
+    UnloadImage(img);
 
-    // detect lod
     size_t lodPos = m_guid.find("_lod");
     m_currentLOD = (lodPos != std::string::npos) ? std::stoi(m_guid.substr(lodPos + 4)) : 0;
 
+    m_loaded = true;
     return true;
 }
 
@@ -64,13 +62,19 @@ void ProgressiveTexturePng::SwapToHigherLOD()
 {
     if (m_pendingImage.empty()) return;
 
-    // free old
-    if (m_imageData)
+    if (m_imageData) {
         free(m_imageData);
+        m_imageData = nullptr;
+    }
 
-    // replace with pending
     size_t newSize = m_pendingImage.size();
     m_imageData = (unsigned char*)malloc(newSize);
+    if (!m_imageData) 
+    {
+        m_pendingImage.clear();
+        return;
+    }
+
     memcpy(m_imageData, m_pendingImage.data(), newSize);
 
     m_width = m_pendingW;

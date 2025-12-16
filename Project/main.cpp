@@ -168,6 +168,7 @@ int main()
     //Dynamic model using GUID (Texture isnt set here, it is set when fully loaded)
     am.Load("cube");
     Model background = rh.GetModel("cube", "background");
+    Model backgroundp = rh.GetModel("cube", "backgroundp");
     am.Load("sphere");
     Model sphere = rh.GetModel("sphere", "sphere");
     Model snowman = rh.GetModel("snowman", "snowman");
@@ -431,7 +432,7 @@ int main()
         if (!progressiveApplied && am.TryGet("004_lod0"))
         {
             Texture2D tex = rh.GetTexture("004_lod0");
-            SetTexture(snowman, tex);
+            SetTexture(backgroundp, tex);
             progressiveApplied = true;
         }
 
@@ -443,7 +444,7 @@ int main()
         DrawModel(background, { 40, 0, 0 }, 20.0f, DARKBLUE);
         DrawModel(background, { -40, 0, 0 }, 20.0f, DARKBLUE);
         DrawModel(background, { 0, 0, 40 }, 20.0f, DARKBLUE);
-        DrawModel(background, { 0, 0, -40 }, 20.0f, LIGHTGRAY);
+        DrawModel(backgroundp, { 0, 0, -40 }, 20.0f, LIGHTGRAY);
         DrawModel(background, { 0, 30, 0 }, 20.0f, DARKBLUE);
 
         DrawModel(snowman, { 0,-2, 0 }, 1.0f, WHITE);
@@ -475,8 +476,8 @@ int main()
         EndMode3D();
 
         //2D
-        DrawRectangle(20, 20, 330, 200, Fade(SKYBLUE, 0.5f));
-        DrawRectangleLines(20, 20, 330, 200, BLUE);
+        DrawRectangle(20, 20, 380, 260, Fade(SKYBLUE, 0.5f));
+        DrawRectangleLines(20, 20, 380, 260, BLUE);
 
         DrawText("Controls:", 30, 30, 30, BLACK);
         DrawText("1-3 -> Load Assets", 30, 60, 30, BLACK);
@@ -484,6 +485,8 @@ int main()
         DrawText("5 -> Stress Test", 30, 120, 30, BLACK);
         DrawText("0 -> Stack Test", 30, 150, 30, BLACK);
         DrawText("X -> Unload Assets", 30, 180, 30, BLACK);
+        DrawText("P -> Progressively Load", 30, 210, 30, BLACK);
+        DrawText("M1 -> pooled projectiles", 30, 240, 30, BLACK);
 
         DrawStackAllocatorOverlay(g_memoryDebug);
         DrawAssetManagerOverlay(g_assetsDebug);
