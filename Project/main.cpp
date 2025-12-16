@@ -373,6 +373,7 @@ int main()
             rh.ReleaseTexture("colormap");
             rh.ReleaseTexture("colormap");
             rh.ReleaseTexture("colormap");
+            rh.ReleaseTexture("004_lod0");
             isLoaded1 = isLoaded2 = isLoaded3 = false;
             
             for (int i = 100; i < 200; ++i)
