@@ -39,6 +39,8 @@ public:
 	void ForceUnloadTexture(std::string GUID);
 	void ForceUnloadModel(std::string name);
 
+	void RequestProgressiveTexture(const std::string& baseGuid, int maxLOD);
+	void Update(float dt);
 	void CleanUp();
 
 private:
@@ -48,6 +50,21 @@ private:
 
 	std::unordered_map<std::string, TextureEntry> m_textures;
 	std::unordered_map<std::string, ModelEntry> m_models;
+
+	struct ProgressiveLODState
+	{
+		std::string baseGuid;
+		std::string nextGuid;
+		std::string pendingUnload;
+
+		float timer = 0.0f;
+		float delay = 2.0f;
+
+		int maxLOD = 0;
+		bool active = false;
+	};
+
+	std::unordered_map<std::string, ProgressiveLODState> m_progressiveLODs;
 
 	Texture2D m_baseTexture;
 	Model m_baseModel;

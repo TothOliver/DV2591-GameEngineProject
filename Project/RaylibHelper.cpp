@@ -215,3 +215,127 @@ Model RaylibHelper::GenerateBaseModel()
     Model model = LoadModelFromMesh(cube);
     return model;
 }
+
+void RaylibHelper::RequestProgressiveTexture(const std::string& baseGuid, int maxLOD)
+{
+    // Register state immediately (do NOT depend on TryGet)
+    ProgressiveLODState& state = m_progressiveLODs[baseGuid];
+    state.baseGuid = baseGuid;
+    state.timer = 0.0f;
+    state.delay = 2.0f;
+    state.maxLOD = maxLOD;
+    state.active = true;
+    state.nextGuid.clear();
+    state.pendingUnload.clear();
+
+    // Start loading base texture
+    m_assetManager->LoadAsync(baseGuid);
+
+    // Force GPU texture creation when resource arrives
+    GetTexture(baseGuid);
+}
+
+
+
+void RaylibHelper::Update(float dt)
+{
+    for (auto& [guid, state] : m_progressiveLODs)
+    {
+        if (!state.active)
+            continue;
+
+        state.timer += dt;
+        if (state.timer < state.delay)
+            continue;
+
+        auto baseRes = m_assetManager->TryGet(state.baseGuid);
+        if (!baseRes)
+            continue;
+
+        auto baseTex = std::dynamic_pointer_cast<ProgressiveTexturePng>(baseRes);
+        if (!baseTex)
+            continue;
+
+        // Initialize LOD metadata once
+        if (state.nextGuid.empty())
+        {
+            baseTex->SetLODInfo(state.maxLOD);
+
+            if (!baseTex->HasHigherLOD())
+            {
+                state.active = false;
+                continue;
+            }
+
+            state.nextGuid = baseTex->GetNextLODGuid();
+            m_assetManager->LoadAsync(state.nextGuid);
+            state.timer = 0.0f;
+            continue;
+        }
+
+        // Check if next LOD resource is ready
+        auto nextRes = m_assetManager->TryGet(state.nextGuid);
+        if (!nextRes)
+            continue;
+
+        auto nextTex = std::dynamic_pointer_cast<ProgressiveTexturePng>(nextRes);
+        if (!nextTex)
+            continue;
+
+        // SAFE deep copy of pixel data (no dangling pointers)
+        const size_t size =
+            static_cast<size_t>(nextTex->GetWidth()) *
+            static_cast<size_t>(nextTex->GetHeight()) * 4;
+
+        std::vector<uint8_t> pixelCopy(size);
+        memcpy(pixelCopy.data(), nextTex->GetImageData(), size);
+
+        // Load + promote
+        if (!baseTex->LoadHigherLOD(pixelCopy, nextTex->GetWidth(), nextTex->GetHeight()))
+            continue;
+
+        baseTex->TryUpgrade();
+
+        // Update GPU texture safely
+        auto& entry = m_textures[state.baseGuid];
+
+        if (entry.texture.id != 0)
+        {
+            if (entry.texture.width != baseTex->GetWidth() ||
+                entry.texture.height != baseTex->GetHeight())
+            {
+                UnloadTexture(entry.texture);
+                entry.texture = GenerateTexture(baseRes);
+            }
+            else
+            {
+                UpdateTexture(entry.texture, baseTex->GetTexture());
+            }
+        }
+
+        // Delay unload to avoid race conditions
+        state.pendingUnload = state.nextGuid;
+
+        // Prepare next LOD or finish
+        if (baseTex->HasHigherLOD())
+        {
+            state.nextGuid = baseTex->GetNextLODGuid();
+            m_assetManager->LoadAsync(state.nextGuid);
+            state.timer = 0.0f;
+        }
+        else
+        {
+            state.active = false;
+        }
+
+        // Safe cleanup
+        if (!state.pendingUnload.empty())
+        {
+            m_assetManager->Unload(state.pendingUnload);
+            state.pendingUnload.clear();
+        }
+    }
+}
+
+
+

@@ -420,6 +420,24 @@ int main()
         // Update projectiles
         projectileManager.Update(dt);
 
+        if (IsKeyPressed(KEY_P))
+        {
+            rh.RequestProgressiveTexture("004_lod0", 2);
+            
+        }
+
+        static bool progressiveApplied = false;
+
+        if (!progressiveApplied && am.TryGet("004_lod0"))
+        {
+            Texture2D tex = rh.GetTexture("004_lod0");
+            SetTexture(snowman, tex);
+            progressiveApplied = true;
+        }
+
+        rh.Update(dt);
+
+        void Update(float dt);
         //Background
         DrawModel(background, { 0, -22, 0 }, 20.0f, DARKGREEN);
         DrawModel(background, { 40, 0, 0 }, 20.0f, DARKBLUE);
